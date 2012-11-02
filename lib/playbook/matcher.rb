@@ -1,3 +1,5 @@
+require 'active_support/core_ext/object/try'
+
 module Playbook
   class Matcher
 
@@ -27,7 +29,7 @@ module Playbook
 
     def version_module_name(constant_name)
       matcher = series_match(constant_name, ForModule::FULL, ForModule::MAJOR_AND_MINOR, ForModule::MAJOR)
-      matcher && matcher[2]
+      matcher.try(:[], 2)
     end
 
     def version_from_namespace(constant_name)

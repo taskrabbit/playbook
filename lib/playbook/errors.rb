@@ -1,3 +1,5 @@
+require 'active_support/core_ext/module/delegation'
+
 module Playbook
   module Errors
     
@@ -5,6 +7,12 @@ module Playbook
     class OverRateLimitError < StandardError; end
     class ControllerNotInitializedError < StandardError; end
     class GeneralError < StandardError; end
+
+    class ResponseNotProvidedError < StandardError
+      def initialize(adapter, method_name)
+        super("No response was provided by #{adapter}##{method_name}")
+      end
+    end
 
     class DocumentationNotProvidedError < StandardError
       

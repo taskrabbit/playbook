@@ -1,8 +1,10 @@
+require 'active_support/core_ext/module/delegation'
+
 module Playbook
   module Request
     class ControllerRequest < BaseRequest
 
-      delegate :params, :current_user, :current_geo, :to => :@controller
+      delegate :current_user, :current_geo, :to => :@controller
       attr_reader :controller
       
       def initialize(controller)

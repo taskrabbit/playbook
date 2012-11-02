@@ -1,9 +1,17 @@
+require 'active_support/core_ext/module/delegation'
+require 'active_support/core_ext/object/try'
+require 'active_support/core_ext/hash/slice'
+
 module Playbook
   class Adapter  
     
-    def initialize(request = nil)
-      @request = request
+    class FinishedNotifier < StandardError; end
+
+    delegate :params, :current_user, :current_geo, :to => :@request
+
+    def initialize(request)
       @response = nil
+      @request = request
     end
 
     def success(variables = {})
@@ -19,7 +27,8 @@ module Playbook
         @response = @request.response_class.new(@request, true, variables_or_message)
       else 
         @response = @request.error_response_class.new(@request, variable_or_message)
-      end    
+      end  
+      raise FinishedNotifier  
     end
 
 
@@ -65,22 +74,24 @@ module Playbook
         require_params(*keys)
       end
       
-      def sanitize_params(params, method_name)
+      def sanitize_params!(instance, method_name)
         safe_keys = Array(whitelisted_params[method_name.to_sym])
-        return params if safe_keys.empty?
-        
+        return if safe_keys.empty?
+
         always_safe = Array(whitelisted_params[:all])
-        params.slice(*(safe_keys | always_safe))
+        instance.params.slice!(*(safe_keys | always_safe))
       end
 
       # TODO: refactor. creates a lot of extra arrays and stuff.
-      def ensure_required_params_exist!(params, method_name)
+      def ensure_required_params_exist!(instance, method_name)
+        
         required_keys = Array(required_params[method_name.to_sym].try(:[], :need))
         any_of = Array(required_params[method_name.to_sym].try(:[], :any_of))
         
         return if required_keys.empty? && any_of.empty?
         
-        param_keys = params.keys.map(&:to_sym)
+        param_keys = instance.params.keys.map(&:to_sym)
+
         unless required_keys.empty?
           missing_required = (required_keys - param_keys)
           raise ::Playbook::Errors::RequiredParameterMissingError.new(missing_required) unless missing_required.empty?
@@ -122,7 +133,7 @@ module Playbook
       def method_added(method_name)
         return if @skip_method_checking
         return if method_name.to_s =~ /_with(out)?_filters$/
-        return unless self.public_instance_methods.include?(method_name.to_s)
+        return unless self.public_instance_methods.include?(method_name.to_sym)
         endpoint(method_name)
       end
 
@@ -135,10 +146,16 @@ module Playbook
 
         without_method_checks do
           class_eval <<-SAN, __FILE__, __LINE__ + 1
-            def #{name}_with_filters(params)
-              self.class.ensure_required_params_exist!(params, '#{name}')
-              params = self.class.sanitize_params(params, '#{name}')
-              #{name}_without_filters(params)
+            def #{name}_with_filters(*args)
+              self.class.ensure_required_params_exist!(self, '#{name}')
+              self.class.sanitize_params!(self, '#{name}')
+              begin
+                #{name}_without_filters(*args)
+              rescue FinishedNotifier
+              end
+              
+              raise ::Playbook::Errors::ResponseNotProvidedError.new(self, '#{name}') unless @response
+              @response
             end
           SAN
           alias_method_chain name, :filters
@@ -156,4 +173,4 @@ module Playbook
 
     end
   end
-endadapter.rb
+end

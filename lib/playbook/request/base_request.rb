@@ -2,12 +2,10 @@ module Playbook
   module Request 
     class BaseRequest
         
-      def initialize(params)
-        @params = params
-      end
+      attr_accessor :params
 
-      def params
-        @params
+      def initialize(params)
+        @params = (params || {}).dup
       end
 
       def response_class
