@@ -16,22 +16,20 @@ module Playbook
 
  class << self
     
+
     def configure(&block)
-      configuration.instance_eval(&block) if block_given?
-      configuration
+      @configuration ||= ::Playbook::Configuration.new
+      @configuration.instance_eval(&block) if block_given?
+      @configuration
     end
     alias_method :config, :configure
+
 
     def matchers
       @matchers ||= ::Playbook::Matcher.new
     end
     alias_method :matcher, :matchers
 
-    protected
-
-    def configuration
-      @configuration ||= ::Playbook::Configuration.new
-    end
   end
      
 end
