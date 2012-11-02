@@ -16,7 +16,7 @@ module Playbook
         ::Playbook::Response::ControllerResponse
       end
 
-      def response_error_class
+      def error_response_class
         ::Playbook::Response::ControllerErrorResponse
       end
 

@@ -81,6 +81,7 @@ describe Playbook::Matcher do
     before do
       Playbook.configure do 
         register_version 1, 1.1, 2, 2.2
+        throttle_header = 'X-PLAYBOOK-THROTTLE'
       end
     end
 

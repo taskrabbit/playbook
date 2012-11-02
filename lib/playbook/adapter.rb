@@ -26,7 +26,7 @@ module Playbook
       if success
         @response = @request.response_class.new(@request, true, variables_or_message)
       else 
-        @response = @request.error_response_class.new(@request, variable_or_message)
+        @response = @request.error_response_class.new(@request, variables_or_message)
       end  
       raise FinishedNotifier  
     end
@@ -153,7 +153,7 @@ module Playbook
                 #{name}_without_filters(*args)
               rescue FinishedNotifier
               end
-              
+
               raise ::Playbook::Errors::ResponseNotProvidedError.new(self, '#{name}') unless @response
               @response
             end

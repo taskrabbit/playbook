@@ -5,9 +5,12 @@ module Playbook
     attr_accessor :rescue_errors
     attr_accessor :require_documentation
     attr_accessor :throttle_header
+    attr_accessor :throttler_rate
 
     def initialize
       @versions = []
+      self.throttle_header = 'X-API-RATE-LIMIT'
+      self.throttler_rate  = 3600 # seconds
       self.rescue_errors = true
     end
 

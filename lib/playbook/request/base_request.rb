@@ -12,7 +12,7 @@ module Playbook
         ::Playbook::Response::BaseResponse
       end
 
-      def response_error_class
+      def error_response_class
         ::Playbook::Response::BaseErrorResponse
       end
 

@@ -10,12 +10,18 @@ describe ::Playbook::Adapter do
       whitelist :object, :on => :doit 
       require_params :id, :on => :doit
 
+      require_any_param :id, :email, :on => :doit3
+
       def doit
         success({:name => :doit, :params => self.params})
       end
 
       def doit2
         success({:name => :doit2, :params => self.params})
+      end
+
+      def doit3
+        success({:name => :doit3, :params => self.params})
       end
 
     end
@@ -28,6 +34,11 @@ describe ::Playbook::Adapter do
 
       def doit2
         success({:name => :doit2, :params => self.params.merge(:v2v1 => true)})
+      end
+
+      def doit3
+        failure({:name => :doit3, :params => self.params.merge(:v2v1 => true)})
+        invoking_a_method_that_doesnt_exist
       end
     end
   end
@@ -42,5 +53,30 @@ describe ::Playbook::Adapter do
     response = a.doit
     response.params.should eql(:id => 'test')
   end 
+
+  it 'should be able to require params' do
+    a = adapter('V2', {:anything => true})
+    lambda{
+      a.doit
+    }.should raise_error(Playbook::Errors::RequiredParameterMissingError)
+  end
+
+  it 'should allow partial param matching' do
+    a = adapter('V2', {:email => true})
+    a.doit3.should be_success
+
+    a = adapter('V2', {:id => true})
+    a.doit3.should be_success
+
+    a = adapter('V2', {})
+    lambda{ a.doit3 }.should raise_error(Playbook::Errors::RequiredParameterMissingError)
+  end
+
+  it 'should exit the method execution immediately when success or failure is called' do
+    a  = adapter('V2v1', {:id => true})
+    lambda{
+      a.doit3.should_not be_success
+    }.should_not raise_error
+  end
 
 end

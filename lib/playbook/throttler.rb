@@ -2,24 +2,24 @@
 module Playbook
   class Throttler
     
-    attr_reader :api_key
+    attr_reader :access_token
     attr_reader :user_id
     attr_reader :unlimited
     attr_reader :limit
     
-    def initialize(key, user_id = nil, limit = nil)
-      @api_key = key
-      @user = user
+    def initialize(token, user_id = nil, limit = nil)
+      @access_token = token
+      @user_id = user_id
       @limit = limit
       @unlimited = @limit.nil?
     end
     
     def record_request!
-      store.try(:incr, hour_key)
+      store.try(:incr, rate_key)
     end
     
     def needs_rate_limiting?
-      !self.unlimited
+      !@unlimited
     end
     
     def validate_request!
@@ -28,16 +28,16 @@ module Playbook
     end
     
     def within_rate_limit?
-      self.hourly_request_count <= limit
+      self.rated_request_count <= limit
     end
     
-    def hourly_request_count
-      store.try(:get, hour_key).to_i
+    def rated_request_count
+      store.try(:get, rate_key).to_i
     end
     
     def stats
       return "unlimited" if needs_rate_limiting?
-      return "#{hourly_request_count} of #{limit}"
+      return "#{rated_request_count} of #{@limit}"
     end
 
     protected
@@ -46,8 +46,10 @@ module Playbook
       nil
     end
     
-    def hour_key
-      "api-throttling-#{api_key}-#{user_id || 'all'}-#{Time.now.strftime("%Y-%m-%d-%H")}"
+    def reate_key
+      rate = ::Playbook.config.throttler_rate.to_i
+      time_key = rate > 0 ? Time.now.to_i / rate : rate
+      "api-throttling-#{@access_token}-#{@user_id || 'all'}-#{}"
     end
   end
 

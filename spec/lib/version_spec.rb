@@ -44,4 +44,21 @@ describe ::Playbook::Version do
     f('3.4.beta2').hash.should  eql('3.4.beta2'.hash)
   end
 
+  context 'asking questions' do
+
+    it 'should determine major properly' do
+      f('3.4').should_not       be_major
+      f('3.0').should           be_major
+      f('3.0.beta').should_not  be_major
+      f('3').should             be_major
+    end
+
+    it 'should determine beta properly' do
+      f('3.4').should_not       be_beta
+      f('3.4.beta').should      be_beta
+      f('3.4.beta2').should     be_beta
+    end
+
+  end
+
 end
