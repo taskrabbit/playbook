@@ -39,7 +39,11 @@ module Playbook
     def <=>(other)
       val = @major <=> other.major
       val = @minor <=> other.minor if val.zero?
-      val = @beta.to_s <=> other.beta.to_s if val.zero?
+      if val.zero?
+        return 1 if !self.beta? && other.beta?
+        return -1  if self.beta? && !other.beta?
+        return @beta.to_s <=> other.beta.to_s 
+      end
       val
     end
 

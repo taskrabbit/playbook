@@ -24,11 +24,11 @@ describe Playbook::Configuration do
 
     let(:conf){
       ::Playbook.config do
-        register_versions 1.1, 2.0, 2.1, '2.2.beta', '2.2.beta2', '3'
+        register_versions 1.1, 2.0, 2.1, 2.2, '2.2.beta', '2.2.beta2', '3'
       end
     }
 
-    let(:version_strings){ %w(1.1 2.0 2.1 2.2.beta 2.2.beta2 3.0) }
+    let(:version_strings){ %w(1.1 2.0 2.1 2.2.beta 2.2.beta2 2.2 3.0) }
 
     it 'should provide an ordered list of the versions' do
       conf.versions.map(&:to_s).should eql(version_strings)
@@ -40,7 +40,7 @@ describe Playbook::Configuration do
 
     it 'should provide the most recent version properly' do
       conf.descending_versions(2.1).should eql(%w(2.1 2.0 1.1))
-      conf.descending_versions(2.4).should eql(%w(2.2.beta2 2.2.beta 2.1 2.0 1.1))
+      conf.descending_versions(2.4).should eql(%w(2.2 2.2.beta2 2.2.beta 2.1 2.0 1.1))
       conf.descending_versions(1.0).should eql([])
       conf.descending_versions(3.5).should eql(version_strings.reverse)
       conf.descending_versions.should eql(version_strings.reverse)
@@ -48,7 +48,7 @@ describe Playbook::Configuration do
 
     it 'should provide the most recent version properly' do
       conf.most_recent_version(2.1).should eql('2.1')
-      conf.most_recent_version(2.4).should eql('2.2.beta2')
+      conf.most_recent_version(2.4).should eql('2.2')
       conf.most_recent_version(1.0).should be_nil
       conf.most_recent_version(3.5).should eql(version_strings.reverse.first)
       conf.most_recent_version.should eql(version_strings.reverse.first)
