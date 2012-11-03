@@ -24,7 +24,7 @@ module Playbook
     autoload :BaseResponse,             'playbook/response/base_response'
     autoload :ControllerResponse,       'playbook/response/controller_response'
     autoload :BaseErrorResponse,        'playbook/response/base_error_response'
-    autoload :ControllerErrorResponse,  'playbook/response/base_response'
+    autoload :ControllerErrorResponse,  'playbook/response/controller_error_response'
   end
 
 

@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe Playbook::VersionInstantiator do
 
+  class Feather; end
+
   module Bird
     extend ::Playbook::VersionInstantiator
   
@@ -14,6 +16,11 @@ describe Playbook::VersionInstantiator do
     ::Playbook.configure do
       register_version 1, 2
     end
+  end
+
+  # makes sure the root level constant doesn't take priority
+  before do
+    f = Feather.new
   end
 
   it 'should build constants automatically, based on the registered playbook versions' do
@@ -34,7 +41,6 @@ describe Playbook::VersionInstantiator do
       Bird::V2v3::Talon
     }.should raise_error(NameError)
   end
-
 
 
 end

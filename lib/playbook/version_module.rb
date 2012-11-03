@@ -26,7 +26,9 @@ module Playbook
     end
 
     def const_missing(const_name)
+
       error = nil
+
       klazz = begin
         super 
       rescue Exception => e
@@ -34,20 +36,13 @@ module Playbook
         nil
       end
 
-      return klazz if klazz
+      return klazz if klazz.to_s =~ /^#{self.name}::/
 
-        
-      klazz = ::Playbook.matchers.most_relevant_constant(self, const_name, true)
+      klazz2 = ::Playbook.matchers.most_relevant_constant(self, const_name, true)
 
-      if klazz
-        if const_defined?(const_name)
-          return const_get(const_name)
-        else
-          return const_set(const_name, klazz)
-        end
-      else
-        raise error
-      end
+      return const_set(const_name, klazz2) if klazz2
+
+      raise error || NameError.new('unkown constant name', const_name)
 
     end
 

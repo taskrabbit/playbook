@@ -33,7 +33,7 @@ module Playbook
 
     class ObjectError < StandardError
       
-      delegate :id, :to => :object, :prefix => :error_object
+      delegate :id, :to => :error_object, :prefix => :error_object
       
       def initialize(object)
         @object = object

@@ -22,13 +22,13 @@ module Playbook
       respond(false, object_or_message)
     end
 
-    def respond(success, variables_or_message)
+    def respond(success, variables_or_message, skip_raise = false)
       if success
         @response = @request.response_class.new(@request, true, variables_or_message)
       else 
         @response = @request.error_response_class.new(@request, variables_or_message)
       end  
-      raise FinishedNotifier  
+      raise FinishedNotifier unless skip_raise
     end
 
 
@@ -151,10 +151,12 @@ module Playbook
               self.class.sanitize_params!(self, '#{name}')
               begin
                 #{name}_without_filters(*args)
-              rescue FinishedNotifier
+              rescue ::Playbook::Adapter::FinishedNotifier => e
+                raise ::Playbook::Errors::ResponseNotProvidedError.new(self, '#{name}') unless @response
               end
 
-              raise ::Playbook::Errors::ResponseNotProvidedError.new(self, '#{name}') unless @response
+              @response ||= respond(true, {}, true)
+        
               @response
             end
           SAN
