@@ -64,19 +64,16 @@ module Playbook
 
       attr_reader :path, :api_version, :extra
       
-      def initialize(path, api_version, extra = nil)
-        @path = path
-        @api_version = api_version
-        @extra = extra
-      end
-
-      def message
-        "API Version #{api_version}: #{path} is not supported. #{extra}"
+      def initialize(path, api_version, message = nil, status = 404)
+        message ||= "NOT FOUND at #{path}"
+        super(message)
+        @status = status
       end
 
       def status
-        extra ? 410 : 404
+        @status
       end
     end
+
   end
 end
