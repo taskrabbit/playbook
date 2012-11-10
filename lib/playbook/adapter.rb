@@ -8,6 +8,7 @@ module Playbook
     class FinishedNotifier < StandardError; end
 
     delegate :params, :current_user, :current_geo, :to => :@request
+    class_attribute :documentation
 
     def initialize(request)
       @response = nil
@@ -140,9 +141,13 @@ module Playbook
       protected
 
       def endpoint(name, options = {}, &block)
-        if ::Playbook.config.require_documentation && @current_method_documentation.nil?
-          raise ::Playbook::Errors::DocumentationNotProvidedError.new(self, name)
+        if @current_method_documentation.nil?
+          raise ::Playbook::Errors::DocumentationNotProvidedError.new(self, name) if ::Playbook.config.require_documentation 
+        else
+          self.documentation ||= {}
+          self.documentation[name] = @current_method_documentation
         end
+
 
         without_method_checks do
           class_eval <<-SAN, __FILE__, __LINE__ + 1

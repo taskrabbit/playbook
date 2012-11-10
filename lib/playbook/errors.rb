@@ -8,6 +8,17 @@ module Playbook
     class ControllerNotInitializedError < StandardError; end
     class GeneralError < StandardError; end
 
+
+    class AuthenticationError < StandardError
+      def initialize(path)
+        super("#{path} requires authentication")
+      end
+
+      def status
+        401
+      end
+    end
+
     class ResponseNotProvidedError < StandardError
       def initialize(adapter, method_name)
         super("No response was provided by #{adapter}##{method_name}")
@@ -27,6 +38,10 @@ module Playbook
     class RequiredParameterMissingError < StandardError
       def initialize(keys, any_of = false)
         super("Missing #{any_of ? 'at least one of these params' : 'these required params'}: #{keys.join(', ')}")
+      end
+
+      def status
+        412
       end
     end
 
