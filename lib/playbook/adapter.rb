@@ -1,6 +1,7 @@
 require 'active_support/core_ext/module/delegation'
 require 'active_support/core_ext/object/try'
 require 'active_support/core_ext/hash/slice'
+require 'active_support/core_ext/class/attribute'
 
 module Playbook
   class Adapter  
@@ -76,11 +77,10 @@ module Playbook
       end
       
       def sanitize_params!(instance, method_name)
-        safe_keys = Array(whitelisted_params[method_name.to_sym])
+        safe_keys = Array(whitelisted_params[method_name.to_sym]) | Array(whitelisted_params[:all])
         return if safe_keys.empty?
 
-        always_safe = Array(whitelisted_params[:all])
-        instance.params.slice!(*(safe_keys | always_safe))
+        instance.params.slice!(*safe_keys)
       end
 
       # TODO: refactor. creates a lot of extra arrays and stuff.
