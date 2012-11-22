@@ -7,7 +7,9 @@ module Playbook
       def initialize(request, success, assigns = {})
         @request = request
         @success = !!success
-        @assigns = (assigns || {}).stringify_keys
+        @assigns = (assigns || {})
+        @assigns = {'object' => @assigns} unless @assigns.is_a?(Hash)
+        @assigns = @assigns.stringify_keys
       end
 
       def success?

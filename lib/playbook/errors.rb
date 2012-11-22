@@ -3,13 +3,16 @@ require 'active_support/core_ext/module/delegation'
 module Playbook
   module Errors
     
-    class AccessNotGrantedError < StandardError; end
-    class OverRateLimitError < StandardError; end
-    class ControllerNotInitializedError < StandardError; end
-    class GeneralError < StandardError; end
+    # base class. catch this in your execution blocks
+    class Error < ::StandardError; end
+
+    class AccessNotGrantedError < Error; end
+    class OverRateLimitError < Error; end
+    class ControllerNotInitializedError < Error; end
+    class GeneralError < Error; end
 
 
-    class AuthenticationError < StandardError
+    class AuthenticationError < Error
       def initialize(path)
         super("#{path} requires authentication")
       end
@@ -19,13 +22,13 @@ module Playbook
       end
     end
 
-    class ResponseNotProvidedError < StandardError
+    class ResponseNotProvidedError < Error
       def initialize(adapter, method_name)
         super("No response was provided by #{adapter}##{method_name}")
       end
     end
 
-    class DocumentationNotProvidedError < StandardError
+    class DocumentationNotProvidedError < Error
       
       attr_accessor :message_content
       
@@ -35,7 +38,7 @@ module Playbook
     
     end
 
-    class RequiredParameterMissingError < StandardError
+    class RequiredParameterMissingError < Error
       def initialize(keys, any_of = false)
         super("Missing #{any_of ? 'at least one of these params' : 'these required params'}: #{keys.join(', ')}")
       end
@@ -46,7 +49,7 @@ module Playbook
     end
 
 
-    class ObjectError < StandardError
+    class ObjectError < Error
       
       delegate :id, :to => :error_object, :prefix => :error_object
       
@@ -75,7 +78,7 @@ module Playbook
       end
     end
 
-    class EndpointNotSupportedError < StandardError
+    class EndpointNotSupportedError < Error
 
       attr_reader :path, :api_version, :extra
       

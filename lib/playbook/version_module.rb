@@ -42,7 +42,9 @@ module Playbook
 
       return const_set(const_name, klazz2) if klazz2
 
-      raise error || NameError.new('unkown constant name', const_name)
+      return klazz if klazz
+      
+      raise error || NameError.new("Unkown constant name #{const_name}")
 
     end
 

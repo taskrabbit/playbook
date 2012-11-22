@@ -27,8 +27,8 @@ module Playbook
     def respond(success, variables_or_message, skip_raise = false)
       if success
         @response = @request.response_class.new(@request, true, variables_or_message)
-      else 
-        @response = @request.error_response_class.new(@request, variables_or_message)
+      else
+        @response = @request.error_response_class.new(@request, false, variables_or_message)
       end  
       raise FinishedNotifier unless skip_raise
     end
