@@ -41,6 +41,16 @@ describe ::Playbook::Adapter do
         invoking_a_method_that_doesnt_exist
       end
     end
+
+    class V3::Adapter < ::Playbook::Adapter
+
+      require_params :id, :on => :all
+      require_params :user_id, :on => :doit
+
+      def doit
+        success(:name => :doit, :params => self.params.merge(:v2require => true))
+      end
+    end
   end
 
   def adapter(version, params = {})
@@ -79,4 +89,20 @@ describe ::Playbook::Adapter do
     }.should_not raise_error
   end
 
+  it 'should require the all params and the method params' do
+    a = adapter('V3', {:id => true})
+    lambda{
+      a.doit.should_not be_success
+    }.should raise_error(/user_id/)
+
+    b = adapter('V3', {:user_id => true})
+    lambda{
+      b.doit.should_not be_success
+    }.should raise_error(/ id/)
+
+    c = adapter('V3', {:id => true, :user_id => true})
+    lambda{
+      c.doit.should be_success
+    }.should_not raise_error
+  end
 end

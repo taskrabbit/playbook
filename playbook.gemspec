@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Playbook::VERSION
   gem.authors       = ["Mike Nelson"]
   gem.email         = ["mike@mikeonrails.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Playbook provides the groundwork needed to build a well-performing dry API in your rack app}
+  gem.summary       = %q{Rack api groundwork}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)

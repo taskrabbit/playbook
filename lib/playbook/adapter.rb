@@ -85,10 +85,13 @@ module Playbook
 
       # TODO: refactor. creates a lot of extra arrays and stuff.
       def ensure_required_params_exist!(instance, method_name)
-        
-        required_keys = Array(required_params[method_name.to_sym].try(:[], :need))
-        any_of = Array(required_params[method_name.to_sym].try(:[], :any_of))
-        
+
+        required_keys   = Array(required_params[method_name.to_sym].try(:[], :need))
+        required_keys  |= Array(required_params[:all].try(:[], :need))
+
+        any_of          = Array(required_params[method_name.to_sym].try(:[], :any_of))
+        any_of         |= Array(required_params[:all].try(:[], :any_of))
+
         return if required_keys.empty? && any_of.empty?
         
         param_keys = instance.params.keys.map(&:to_sym)

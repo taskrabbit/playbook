@@ -11,7 +11,6 @@ module Playbook
     class ControllerNotInitializedError < Error; end
     class GeneralError < Error; end
 
-
     class AuthenticationError < Error
       def initialize(path)
         super("#{path} requires authentication")
