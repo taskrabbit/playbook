@@ -1,5 +1,7 @@
 # Playbook
 
+[![Build Status](https://secure.travis-ci.org/taskrabbit/playbook.png?branch=master)](https://travis-ci.org/taskrabbit/playbook)
+
 TODO: Write a gem description
 
 ## Installation

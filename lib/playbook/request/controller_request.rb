@@ -1,14 +1,15 @@
 require 'active_support/core_ext/module/delegation'
+require 'active_support/core_ext/hash/except'
 
 module Playbook
   module Request
     class ControllerRequest < BaseRequest
 
-      delegate :current_user, :current_geo, :to => :@controller
+      delegate :current_user, :to => :@controller
       attr_reader :controller
       
       def initialize(controller)
-        super(controller.params)
+        super(controller.params.except(:controller, :action, :format, 'controller', 'action', 'format'))
         @controller = controller
       end
 
