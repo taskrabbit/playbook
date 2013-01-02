@@ -19,5 +19,4 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'rails', '>= 3.1.0'
   gem.add_dependency 'jbuilder'
-  gem.add_dependency 'redcarpet'
 end

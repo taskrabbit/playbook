@@ -8,6 +8,7 @@ module Playbook
   autoload :Controller,                 'playbook/controller'
   autoload :Engine,                     'playbook/engine'
   autoload :Errors,                     'playbook/errors'
+  autoload :Jbuilder,                   'playbook/jbuilder'
   autoload :Matcher,                    'playbook/matcher'
   autoload :Router,                     'playbook/router'
   autoload :VersionModule,              'playbook/version_module'
