@@ -6,7 +6,6 @@ module Playbook
 
     included do
       alias_method_chain :target!, :jsonp
-      alias_method_chain :extract!, :api_type
     end
 
     def jsonp!(callback_name)
