@@ -1,11 +1,15 @@
+require 'singleton'
+
 module Playbook
   class Configuration
+    include Singleton
 
     attr_reader :versions
     attr_accessor :rescue_errors
     attr_accessor :require_documentation
     attr_accessor :throttle_header
     attr_accessor :throttler_rate
+    attr_accessor :documentation_path
 
     def initialize
       @versions = []

@@ -1,7 +1,7 @@
 module Playbook
   class << self
     def reset_config!
-      @configuration = nil
+      Singleton.send :__init__, Playbook::Configuration
     end
   end
 end

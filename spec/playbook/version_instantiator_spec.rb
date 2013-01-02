@@ -13,8 +13,8 @@ describe Playbook::VersionInstantiator do
   end
 
   before do
-    ::Playbook.configure do
-      register_version 1, 2
+    ::Playbook.configure do |c|
+      c.register_version 1, 2
     end
   end
 

@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Playbook::VERSION
   gem.authors       = ["Mike Nelson"]
   gem.email         = ["mike@mikeonrails.com"]
-  gem.description   = %q{Playbook provides the groundwork needed to build a well-performing dry API in your rack app}
-  gem.summary       = %q{Rack api groundwork}
+  gem.description   = %q{Provides the baseline functionality for the taskrabbit api.}
+  gem.summary       = %q{Mount on your app and go}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
@@ -17,5 +17,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.add_dependency 'activesupport', '>= 3.0.0'
+  gem.add_dependency 'rails', '>= 3.1.0'
+  gem.add_dependency 'jbuilder'
+  gem.add_dependency 'redcarpet'
 end

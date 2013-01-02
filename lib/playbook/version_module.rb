@@ -22,7 +22,7 @@ module Playbook
     alias_method :inspect, :name
 
     def playbook_version
-      @playbook_version ||= Playbook.matchers.version_from_namespace(self.name)
+      @playbook_version ||= Playbook::Matcher.version_from_namespace(self.name)
     end
 
     def const_missing(const_name)
@@ -38,7 +38,7 @@ module Playbook
 
       return klazz if klazz.to_s =~ /^#{self.name}::/
 
-      klazz2 = ::Playbook.matchers.most_relevant_constant(self, const_name, true)
+      klazz2 = ::Playbook::Matcher.most_relevant_constant(self, const_name, true)
 
       return const_set(const_name, klazz2) if klazz2
 

@@ -6,7 +6,6 @@ module Playbook
     # base class. catch this in your execution blocks
     class Error < ::StandardError; end
 
-    class AccessNotGrantedError < Error; end
     class OverRateLimitError < Error; end
     class ControllerNotInitializedError < Error; end
     class GeneralError < Error; end
@@ -36,6 +35,13 @@ module Playbook
       end
     
     end
+
+    class AccessNotGrantedError < Error
+      def status
+        412
+      end
+    end
+
 
     class RequiredParameterMissingError < Error
       def initialize(keys, any_of = false)

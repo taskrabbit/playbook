@@ -29,6 +29,7 @@ describe ::Playbook::Version do
     f('3.4').should             eql('3.4')
     f('3.4.beta2').should       eql('3.4.beta2')
     f('V2').should              eql('2.0')
+    f('v2').should              eql('2.0')
     f('V2v1').should            eql('2.1')
     f('V2v1beta5').should       eql('2.1.beta5')
     f(Moose::V2v1).should       eql('2.1')

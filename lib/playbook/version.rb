@@ -11,14 +11,14 @@ module Playbook
       version = version.name if version.is_a?(Class) || version.is_a?(Module)      
       
       if version.is_a?(String)
-        if ::Playbook.matchers.version_string?(version)
+        if ::Playbook::Matcher.version_string?(version)
           result = ::Playbook::Version.new(*version.split('.'))
         else
-          result = ::Playbook.matchers.version_from_namespace(version) 
+          result = ::Playbook::Matcher.version_from_namespace(version) 
         end
       end
       
-      result = ::Playbook::Version.new(version.to_f) if version.is_a?(Numeric)
+      result ||= ::Playbook::Version.new(version.to_f) if version.is_a?(Numeric)
       result
     end
 

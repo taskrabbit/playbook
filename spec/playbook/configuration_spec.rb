@@ -23,8 +23,8 @@ describe Playbook::Configuration do
   context 'with a realistic version config' do
 
     let(:conf){
-      ::Playbook.config do
-        register_versions 1.1, 2.0, 2.1, 2.2, '2.2.beta', '2.2.beta2', '3'
+      ::Playbook.config do |c|
+        c.register_versions 1.1, 2.0, 2.1, 2.2, '2.2.beta', '2.2.beta2', '3'
       end
     }
 

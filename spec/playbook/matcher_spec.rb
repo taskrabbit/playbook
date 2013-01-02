@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Playbook::Matcher do
 
-  let(:matcher){ Playbook.matchers }
+  let(:matcher){ Playbook::Matcher }
 
   %w(V2 V2v1 V2v2beta).each do |v|
     it "should determine #{v} style version modules correctly" do
@@ -17,13 +17,13 @@ describe Playbook::Matcher do
   end
 
   %w(2 2.1 2.0 5.2 5.0.beta 5.5.beta1).each do |v|
-    it "should determine version strings like #{v} correctly" do
+    it "should determine version Strings like #{v} correctly" do
       matcher.version_string?(v).should be_true
     end
   end
 
   %w(a 2.a four).each do |v|
-    it "should determine strings like #{v} are not version strings" do
+    it "should determine Strings like #{v} are not version Strings" do
       matcher.version_string?(v).should be_false
     end
   end
@@ -79,9 +79,9 @@ describe Playbook::Matcher do
     class Cat::V1::FelineAdapter; end
 
     before do
-      Playbook.configure do 
-        register_version 1, 1.1, 2, 2.2
-        throttle_header = 'X-PLAYBOOK-THROTTLE'
+      Playbook.configure do |c|
+        c.register_version 1, 1.1, 2, 2.2
+        c.throttle_header = 'X-PLAYBOOK-THROTTLE'
       end
     end
 

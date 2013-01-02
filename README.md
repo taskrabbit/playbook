@@ -1,14 +1,12 @@
 # Playbook
 
-[![Build Status](https://secure.travis-ci.org/taskrabbit/playbook.png?branch=master)](https://travis-ci.org/taskrabbit/playbook)
-
 TODO: Write a gem description
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'playbook'
+    gem 'Playbook'
 
 And then execute:
 
@@ -16,7 +14,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install playbook
+    $ gem install Playbook
 
 ## Usage
 
