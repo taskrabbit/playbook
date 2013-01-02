@@ -137,7 +137,7 @@ module Playbook
       def method_added(method_name)
         return if @skip_method_checking
         return if method_name.to_s =~ /_with(out)?_filters$/
-        return unless self.public_instance_methods.include?(method_name.to_sym)
+        return unless self.public_instance_methods.include?(method_name.to_sym) || self.public_instance_methods.include?(method_name.to_s)
         endpoint(method_name)
       end
 
