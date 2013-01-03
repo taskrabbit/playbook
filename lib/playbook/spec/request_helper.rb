@@ -9,9 +9,9 @@ module Playbook
       def self.included(base)
         base.instance_eval do
           let(:headers){ {} }
-          let(:interactive_client_app){ mock('Client Application', :id => 44, :secret => '428943952jdlksfjo290fudoijsjflks', :key => '290290420954rkdsfduiu29084jfkodsj', :internal => true, :interactive => true, :internal? => true, :interactive? => true)       } # explorer
-          let(:internal_client_app){    mock('Client Application', :id => 43, :secret => '428943952jdlksfjo290fudoijsjflss', :key => '290290420954rkdsfduiu29084jfkodss', :internal => true, :interactive => false, :internal? => true, :interactive? => false)     } # iphone
-          let(:external_client_app){    mock('Client Application', :id => 42, :secret => '428943952jdlksfjo290fudoijsjflgg', :key => '290290420954rkdsfduiu29084jfkodgg', :internal => false, :interactive => false, :internal? => false, :interactive? => false)   } # html_other
+          let(:interactive_client_app){ stub_object('Client Application', :id => 44, :secret => '428943952jdlksfjo290fudoijsjflks', :key => '290290420954rkdsfduiu29084jfkodsj', :internal => true, :interactive => true, :internal? => true, :interactive? => true)       } # explorer
+          let(:internal_client_app){    stub_object('Client Application', :id => 43, :secret => '428943952jdlksfjo290fudoijsjflss', :key => '290290420954rkdsfduiu29084jfkodss', :internal => true, :interactive => false, :internal? => true, :interactive? => false)     } # iphone
+          let(:external_client_app){    stub_object('Client Application', :id => 42, :secret => '428943952jdlksfjo290fudoijsjflgg', :key => '290290420954rkdsfduiu29084jfkodgg', :internal => false, :interactive => false, :internal? => false, :interactive? => false)   } # html_other
         
           before :each do 
             reset_api_stubs!
@@ -42,7 +42,7 @@ module Playbook
       end
 
       def authenticate!(user, client_app = nil)
-        token = mock( 'Token',
+        token = stub_object('Token',
           :user => user,
           :user_id => user.try(:id),
           :client_application => client_app,
@@ -88,10 +88,18 @@ module Playbook
         [Playbook::BaseController, Playbook::BaseController.descendants].flatten
       end
 
+      def stub_object(name, atts = {})
+        obj = stub_method == :stubs ? stub(name) : double(name)
+        atts.each do |k,v|
+          obj.send(stub_method, k).send(return_method, v)
+        end
+        obj
+      end
+
       def reset_api_stubs!
         all_controllers.each do |c|
           [:get_user_id_from_session, :client_token_from_session, :find_client_application_record, :find_oauth_token_by_secret].each do |meth|
-            c.any_instance.stub(meth)
+            c.any_instance.send(stub_method, meth)
             c.any_instance.unstub(meth)
           end
         end
