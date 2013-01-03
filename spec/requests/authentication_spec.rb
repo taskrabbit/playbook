@@ -14,15 +14,6 @@ describe 'Playbook Authentication Spec' do
 
   end
 
-
-
-
-
-
-
-
-
-
   let(:user){ Playbook::User.find(1) }
 
   before do

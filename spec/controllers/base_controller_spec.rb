@@ -27,7 +27,7 @@ describe ::Playbook::BaseController do
   end
 
   it 'should define endpoints on the fly for adapters' do
-
+    controller.stub(:test) # weird rspec issue: undefined method `__rspec_original_dup' for class `AuthTestController'
     controller.should_not respond_to(:my_test_case_adapter_function)
     controller.class_eval do
       forward_to_adapter :my_test_case_adapter_function, :head => :ok
