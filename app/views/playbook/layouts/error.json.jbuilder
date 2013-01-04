@@ -1,5 +1,3 @@
-
-
 json.errors [@error_object] do |object|
   json.key       'request'
   json.message   object.message

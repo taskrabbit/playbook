@@ -55,7 +55,11 @@ module Playbook
 
     def allow_jsonp!
       Mime::EXTENSION_LOOKUP['jsonp'] = Mime::Type.lookup_by_extension('json')
-      ::Jbuilder.send(:include, ::Playbook::Jbuilder)
+      ::Jbuilder.send(:include, ::Playbook::Jbuilder::Jsonp)
+    end
+
+    def extend_jbuilder!
+      ::Jbuilder.send(:include, ::Playbook::Jbuilder::Extensions)
     end
   
   end
