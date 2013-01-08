@@ -22,7 +22,7 @@ module Playbook::Authorization
   protected
 
   def find_client_application_record(secret)
-    ::ClientApplication.find_by_secret(secret) rescue nil
+    ClientApplication.find_by_secret(secret) rescue nil
   end
 
   def validate_internal_client_application

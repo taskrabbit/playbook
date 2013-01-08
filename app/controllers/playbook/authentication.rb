@@ -24,7 +24,7 @@ module Playbook
     end
 
     def find_user_record(user_id)
-      ::User.find(user_id) rescue nil
+      User.find(user_id) rescue nil
     end
 
     def valid_api_user?(user)
