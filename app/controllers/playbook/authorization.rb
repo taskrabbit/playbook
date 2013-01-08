@@ -7,6 +7,7 @@ module Playbook::Authorization
   end
 
   def current_client_application
+
     return @current_client_application if defined?(@current_client_application)
 
     @current_client_application = oauth2_token.try(:client_application)
@@ -21,7 +22,7 @@ module Playbook::Authorization
   protected
 
   def find_client_application_record(secret)
-    defined?(ClientApplication) ? ClientApplication.find_by_secret(secret) : nil
+    ::ClientApplication.find_by_secret(secret) rescue nil
   end
 
   def validate_internal_client_application

@@ -45,7 +45,7 @@ module Playbook
         col = col.all if col.respond_to?(:all)
 
         self.api_type     'Collection'
-        self.item_type    col[0].api_type
+        self.item_type    col[0].api_type if col[0].respond_to?(:api_type)
 
         self.set!(:items) do |j|
           j.array!(col) do |parent, obj|

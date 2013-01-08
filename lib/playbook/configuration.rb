@@ -61,6 +61,10 @@ module Playbook
     def extend_jbuilder!
       ::Jbuilder.send(:include, ::Playbook::Jbuilder::Extensions)
     end
+
+    def controller(&block)
+      ::Playbook::BaseController.instance_eval(&block)
+    end
   
   end
 end

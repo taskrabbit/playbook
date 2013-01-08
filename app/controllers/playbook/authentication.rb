@@ -16,7 +16,6 @@ module Playbook
 
       return @api_current_user = nil unless valid_api_user?(@api_current_user)
 
-      @api_current_user.verified_login = true
       @api_current_user
     end
 
@@ -25,7 +24,7 @@ module Playbook
     end
 
     def find_user_record(user_id)
-      defined?(User) ? User.find(user_id) : nil
+      ::User.find(user_id) rescue nil
     end
 
     def valid_api_user?(user)
@@ -57,9 +56,9 @@ module Playbook
     end
 
     def find_oauth_token_by_secret(token)
-      return Oauth2Token.find_by_secret(token) if defined?(Oauth2Token)
-      return OauthToken.find_by_secret(token) if defined?(OauthToken)
-      nil
+      token   = Oauth2Token.find_by_secret(token) rescue nil
+      token ||= OauthToken.find_by_secret(token) rescue nil
+      token
     end
 
     def oauth2_token_from_header
