@@ -3,7 +3,7 @@ module Playbook::Authorization
 
   included do
     before_filter :validate_client_application
-    after_filter  :append_client_header
+    after_filter  :append_client_headers
   end
 
   def current_client_application
@@ -37,9 +37,8 @@ module Playbook::Authorization
     raise ::Playbook::Errors::AccessNotGrantedError.new('Client Application Required') unless current_client_application
   end
 
-  def append_client_header
+  def append_client_headers
     response.headers['X-Client-Application'] = client_token_from_headers
-    response.headers['X-TR-App'] = client_token_prefix_from_headers
   end
 
   def retrieve_client_token
@@ -52,16 +51,8 @@ module Playbook::Authorization
     request.headers['X-Client-Application']
   end
 
-  def client_token_prefix_from_headers
-    request.headers['X-TR-App']
-  end
-
   def client_token_from_session
-    prefix = client_token_prefix_from_headers
-    return nil unless prefix
-
-    token = session[:"#{prefix}_client"]
-    find_client_application_record(token).try(:internal?) ? token : nil
+    nil
   end
 
   unless Rails.env.production?
