@@ -1,8 +1,10 @@
 module Playbook
   module Controller
     def playbook_adapter_class
-      self.class.name =~ /(^|:)([a-zA-Z0-9]+)Controller/
-      wanted_adapter_name = "#{$2.to_s.singularize}Adapter"
+      controller_scope = self.class.name.split(self.api_version.to_namespace).last
+      controller_scope =~ /::(.+)Controller$/
+      return nil unless $1
+      wanted_adapter_name = "#{$1.singularize}Adapter"
       ::Playbook::Matcher.most_relevant_class(self.class, wanted_adapter_name)
     end
 
