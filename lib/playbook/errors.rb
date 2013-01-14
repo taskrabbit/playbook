@@ -76,8 +76,9 @@ module Playbook
         by_name.map do |key, msgs|
           name = @object.class.human_attribute_name(key.to_s.gsub(/^.*\./,''))
           {
-            :key => key,
-            :message => "#{key == 'base' ? '' : "#{name} "}#{msgs.join(' & ')}" 
+            :key      => key,
+            :message  => "#{key == 'base' ? '' : "#{name} "}#{msgs.join(' & ')}",
+            :raw      => msgs
           }
         end
       end
