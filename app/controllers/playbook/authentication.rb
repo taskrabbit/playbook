@@ -55,9 +55,9 @@ module Playbook
       @oauth2_token
     end
 
-    def find_oauth_token_by_secret(token)
-      token   = Oauth2Token.find_by_secret(token) rescue nil
-      token ||= OauthToken.find_by_secret(token) rescue nil
+    def find_oauth_token_by_secret(secret)
+      token   = Oauth2Token.find_by_secret(secret) rescue nil
+      token ||= OauthToken.find_by_secret(secret) rescue nil
       token
     end
 
