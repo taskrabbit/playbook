@@ -49,15 +49,15 @@ module Playbook
       auth_token ||= oauth2_token_from_params unless Rails.env.production?
 
       return @oauth2_token = nil unless auth_token
-      @oauth2_token = find_oauth_token_by_secret(auth_token)
+      @oauth2_token = find_oauth_token_by_key(auth_token)
       return @oauth2_token = nil unless @oauth2_token.try(:authorized?)
 
       @oauth2_token
     end
 
-    def find_oauth_token_by_secret(secret)
-      token   = Oauth2Token.find_by_secret(secret) rescue nil
-      token ||= OauthToken.find_by_secret(secret) rescue nil
+    def find_oauth_token_by_key(key)
+      token   = Oauth2Token.find_by_token(key) rescue nil
+      token ||= OauthToken.find_by_token(key) rescue nil
       token
     end
 

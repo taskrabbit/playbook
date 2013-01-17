@@ -53,7 +53,7 @@ module Playbook
         )
 
         all_controllers.each do |c|
-          c.any_instance.send(stub_method, :find_oauth_token_by_secret).with(token.token).send(return_method, token)
+          c.any_instance.send(stub_method, :find_oauth_token_by_key).with(token.token).send(return_method, token)
         end
 
         headers['Authorization']      = "OAuth #{token.token}"
@@ -98,7 +98,7 @@ module Playbook
 
       def reset_api_stubs!
         all_controllers.each do |c|
-          [:get_user_id_from_session, :client_token_from_session, :find_client_application_record, :find_oauth_token_by_secret].each do |meth|
+          [:get_user_id_from_session, :client_token_from_session, :find_client_application_record, :find_oauth_token_by_key].each do |meth|
             c.any_instance.send(stub_method, meth)
             c.any_instance.unstub(meth)
           end
