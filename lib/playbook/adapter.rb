@@ -8,7 +8,7 @@ module Playbook
     
     class FinishedNotifier < StandardError; end
 
-    delegate :params, :current_user, :current_geo, :to => :@request
+    delegate :params, :current_user, :current_client_application, :to => :@request
     class_attribute :documentation
 
     def initialize(request)
