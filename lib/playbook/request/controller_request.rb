@@ -5,7 +5,7 @@ module Playbook
   module Request
     class ControllerRequest < BaseRequest
 
-      delegate :current_user, :to => :@controller
+      delegate :current_user, :current_client_application, :to => :@controller
       attr_reader :controller
       
       def initialize(controller)
