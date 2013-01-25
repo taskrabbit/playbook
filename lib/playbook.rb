@@ -9,6 +9,7 @@ module Playbook
   autoload :Engine,                     'playbook/engine'
   autoload :Errors,                     'playbook/errors'
   autoload :Jbuilder,                   'playbook/jbuilder'
+  autoload :JsonResult,                 'playbook/json_result'
   autoload :Matcher,                    'playbook/matcher'
   autoload :Router,                     'playbook/router'
   autoload :VersionModule,              'playbook/version_module'

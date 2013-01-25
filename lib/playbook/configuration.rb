@@ -7,14 +7,10 @@ module Playbook
     attr_reader :versions
     attr_accessor :rescue_errors
     attr_accessor :require_documentation
-    attr_accessor :throttle_header
-    attr_accessor :throttler_rate
     attr_accessor :documentation_path
 
     def initialize
       @versions = []
-      self.throttle_header = 'X-API-RATE-LIMIT'
-      self.throttler_rate  = 3600 # seconds
       self.rescue_errors = true
     end
 
@@ -60,10 +56,7 @@ module Playbook
 
     def extend_jbuilder!
       ::Jbuilder.send(:include, ::Playbook::Jbuilder::Extensions)
-    end
-
-    def controller(&block)
-      ::Playbook::BaseController.instance_eval(&block)
+      ::JbuilderTemplate.send(:include, ::Playbook::Jbuilder::TemplateExtensions)
     end
   
   end

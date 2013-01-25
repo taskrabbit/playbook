@@ -26,6 +26,34 @@ module Playbook
 
     end
 
+    module TemplateExtensions
+      
+      def collection!(col, options = {})
+
+        if cache_options = options.delete(:cache)
+          cache_key = cache_key_for_collection(cache_options.delete(:key), col)
+          self.cache! cache_key, cache_options do |json|
+            json.extract_collection!(col, options)
+          end
+        else
+          self.extract_collection!(col, options)
+        end
+
+      end
+
+      protected
+
+      def cache_key_for_collection(base_key, col)
+        key = [base_key]
+        if col.respond_to?(:current_page)
+          key << "page"
+          key << col.current_page
+        end
+        key.flatten.reject(&:blank?).join('-')
+      end
+
+    end
+
     module Extensions
       extend ActiveSupport::Concern
 
@@ -33,7 +61,12 @@ module Playbook
         alias_method_chain :extract!, :api_type
       end
 
-      def collection(col)
+
+      def extract_collection!(col, options = {})
+
+
+        partial = options[:partial]
+        as      = options[:as]
 
         if col.respond_to?(:total_count)
           self.page         col.current_page
@@ -49,11 +82,15 @@ module Playbook
 
         self.set!(:items) do |j|
           j.array!(col) do |parent, obj|
-            yield parent, obj
+            if partial
+              parent.partial! partial, as => obj
+            else
+              yield parent, obj
+            end
           end
         end
-
       end
+
 
       def extract_with_api_type!(object, *keys)
         keys = keys | [:api_type] if object.respond_to?(:api_type)
