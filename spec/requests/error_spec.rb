@@ -71,8 +71,8 @@ describe "Playbook Errors" do
   end
 
   it 'should blow up due to a client app and provide a meaningful error' do
-    error = get_error '/api/v2/test/playbook_error_spec/happy.json'
-
+    get '/api/v2/test/playbook_error_spec/happy.json'
+    error = get_error
     error['key'].should eql('request')
     error['message'].should eql('Client Application Required')
   end
@@ -89,14 +89,15 @@ describe "Playbook Errors" do
     end
 
     it 'should provide back the message of a general error' do
-      error = get_error('/api/v2/test/playbook_error_spec/general_error.json', {}, headers)
-
+      get('/api/v2/test/playbook_error_spec/general_error.json', {}, headers)
+      error = get_error
       error['key'].should eql('request')
       error['message'].should eql('Anything')
     end
 
     it 'should render object errors for AR\'s' do
-      error = get_error('/api/v2/test/playbook_error_spec/object_error.json', {}, headers)
+      get('/api/v2/test/playbook_error_spec/object_error.json', {}, headers)
+      error = get_error
 
       error['key'].should eql('name')
       error['message'].should eql('Name cant be blank')
@@ -105,7 +106,8 @@ describe "Playbook Errors" do
     context 'authentication' do
 
       it 'should require authentication' do
-        error = get_error('/api/v2/test/playbook_error_spec/auth_ep.json', {}, headers)
+        get('/api/v2/test/playbook_error_spec/auth_ep.json', {}, headers)
+        error = get_error
         error['key'].should eql('request')
         error['message']
       end
@@ -119,7 +121,8 @@ describe "Playbook Errors" do
     context 'authorization' do
 
       it 'should require an internal app' do
-        error = get_error('/api/v2/test/playbook_error_spec/internal_ep.json', {}, headers)
+        get('/api/v2/test/playbook_error_spec/internal_ep.json', {}, headers)
+        error = get_error
         response.status.should eql(404)
       end
 
@@ -133,14 +136,16 @@ describe "Playbook Errors" do
     context 'jsonp' do
 
       it 'should 404 if the endpoint does not allow jsonp' do
-        error = get_error('/api/v2/test/playbook_error_spec/happy.jsonp', {}, headers)
+        get('/api/v2/test/playbook_error_spec/happy.jsonp', {}, headers)
+        error = get_error
         response.status.should eql(405)
         error['key'].should eql('request')
         error['message'].should eql('Jsonp is not enabled for this endpoint.')
       end
 
       it 'should require a callback param' do
-        error = get_error('/api/v2/test/playbook_error_spec/jsonp_ep.jsonp', {}, headers)
+        get('/api/v2/test/playbook_error_spec/jsonp_ep.jsonp', {}, headers)
+        error = get_error
         response.status.should eql(400)
         error['key'].should eql('request')
         error['message'].should eql('Invalid jsonp request. Provide a callback parameter.')

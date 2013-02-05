@@ -21,7 +21,8 @@ describe 'Playbook Authentication Spec' do
   end
 
   it 'should provide an authentication error when no user is present' do
-    error = get_error('/api/v2/test/auth_test/auth_required_ep.json', {}, headers)
+    get('/api/v2/test/auth_test/auth_required_ep.json', {}, headers)
+    error = get_error
     response.status.should eql(401)
     error['key'].should eql('request')
     error['message'].should eql("/api/v2/test/auth_test/auth_required_ep.json requires authentication")

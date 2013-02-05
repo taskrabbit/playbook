@@ -27,7 +27,8 @@ describe 'Playbook Authorization' do
   end
 
   it 'should fail when no client is passed and respond with a 401 unauthorized' do
-    error = get_error '/api/v2/test/playbook_authorization_spec/none_ep.json', {}, {}
+    get '/api/v2/test/playbook_authorization_spec/none_ep.json', {}, {}
+    error = get_error
     error['key'].should eql('request')
     error['message'].should eql('Client Application Required')
     response.status.should eql(412)
@@ -41,7 +42,8 @@ describe 'Playbook Authorization' do
 
   it 'should fail when a client app is provided but does not have the proper capabilities' do
     authorize!(external_client_app)
-    error = get_error('/api/v2/test/playbook_authorization_spec/internal_ep.json', {}, headers)
+    get('/api/v2/test/playbook_authorization_spec/internal_ep.json', {}, headers)
+    error = get_error
     error['key'].should eql('request')
     error['message'].should eql('NOT FOUND at /api/v2/test/playbook_authorization_spec/internal_ep.json')
     response.status.should eql(404)
@@ -55,7 +57,8 @@ describe 'Playbook Authorization' do
 
   it 'should fail when an internal app is provided but an interactive endpoint is required' do
     authorize!(internal_client_app)
-    error = get_error('/api/v2/test/playbook_authorization_spec/interactive_ep.json', {}, headers)
+    get('/api/v2/test/playbook_authorization_spec/interactive_ep.json', {}, headers)
+    error = get_error
     error['key'].should eql('request')
     error['message'].should eql('NOT FOUND at /api/v2/test/playbook_authorization_spec/interactive_ep.json')
     response.status.should eql(404)
@@ -64,7 +67,8 @@ describe 'Playbook Authorization' do
   it 'should require both interactive and internal if they are both required' do
     interactive_client_app.stub(:internal?).and_return(false)
     authorize!(interactive_client_app)
-    error = get_error('/api/v2/test/playbook_authorization_spec/combined_ep.json', {}, headers)
+    get('/api/v2/test/playbook_authorization_spec/combined_ep.json', {}, headers)
+    error = get_error
     error['key'].should eql('request')
     error['message'].should eql('NOT FOUND at /api/v2/test/playbook_authorization_spec/combined_ep.json')
     response.status.should eql(404)

@@ -8,26 +8,49 @@ module Playbook
 
       def self.included(base)
         base.instance_eval do
-          let(:headers){ {} }
-          let(:interactive_client_app){ stub_object('Client Application', :id => 44, :secret => '428943952jdlksfjo290fudoijsjflks', :key => '290290420954rkdsfduiu29084jfkodsj', :internal => true, :interactive => true, :internal? => true, :interactive? => true)       } # explorer
-          let(:internal_client_app){    stub_object('Client Application', :id => 43, :secret => '428943952jdlksfjo290fudoijsjflss', :key => '290290420954rkdsfduiu29084jfkodss', :internal => true, :interactive => false, :internal? => true, :interactive? => false)     } # iphone
-          let(:external_client_app){    stub_object('Client Application', :id => 42, :secret => '428943952jdlksfjo290fudoijsjflgg', :key => '290290420954rkdsfduiu29084jfkodgg', :internal => false, :interactive => false, :internal? => false, :interactive? => false)   } # html_other
-        
           before :each do 
             reset_api_stubs!
           end
         end
       end
 
-      def get_errors(path, params = {}, headers = {})
-        get(path, {}, headers)
+      def headers
+        @headers ||= {}
+      end
+
+      def interactive_client_app
+        @interactive_client_app ||= defined?(::ClientApplication) ? ClientApplication.where(:internal => true, :interactive => true).first : nil
+        @interactive_client_app ||= stub_object('Client Application', :id => 44, :secret => '428943952jdlksfjo290fudoijsjflks', :key => '290290420954rkdsfduiu29084jfkodsj', :internal => true, :interactive => true, :internal? => true, :interactive? => true)
+        @interactive_client_app
+      end
+
+      def internal_client_app
+        @internal_client_app ||= defined?(::ClientApplication) ? ClientApplication.where(:internal => true, :interactive => false).first : nil
+        @internal_client_app ||= stub_object('Client Application', :id => 43, :secret => '428943952jdlksfjo290fudoijsjflss', :key => '290290420954rkdsfduiu29084jfkodss', :internal => true, :interactive => false, :internal? => true, :interactive? => false)
+        @internal_client_app
+      end
+
+      def external_client_app
+        @external_client_app ||= defined?(::ClientApplication) ? ClientApplication.where(:internal => false, :interactive => false).first : nil
+        @external_client_app ||= stub_object('Client Application', :id => 42, :secret => '428943952jdlksfjo290fudoijsjflgg', :key => '290290420954rkdsfduiu29084jfkodgg', :internal => false, :interactive => false, :internal? => false, :interactive? => false)
+        @external_client_app
+      end
+
+      
+
+      def get_errors
         json = JSON.parse(response.body) rescue {}
         json['response'].try(:[], 'errors') || []
       end
 
-      def get_error(path, params = {}, headers = {})
-        get_errors(path, params, headers).first
+      def get_error
+        get_errors.first
       end 
+
+      def json
+        return @json if defined?(@json)
+        @json ||= response.body.blank? ? nil : JSON.parse(response.body)
+      end
 
       def authorize!(client_app)
         if client_app
@@ -72,7 +95,6 @@ module Playbook
 
       def get_request_info(path, params = {}, headers = {})
         get path, params, headers
-        json = JSON.parse(response.body) rescue {}
         json['request'] || {}
       end
 
