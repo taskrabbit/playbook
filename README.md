@@ -1,17 +1,37 @@
 # Playbook - The Underpinnings to Your Rails API
 
-Playbook provides your rails application with a simple way to create a customized, clean, and fast api. It lays out the groundwork for versioning, deprecation, rendering, reusability, authorization, and authentication. Here's an example:
+Playbook provides your rails application with a simple way to create a customized, clean, and fast api. It lays out the groundwork for versioning, deprecation, rendering, reusability, authorization, and authentication. This README will show each major section of playbook with an example and an explanation of the code.
+
+
+#### Routing
+
+Playbook provides you with simple way of defining versioned routes. By extending your router with the `Playbook::Router` module you are given a `versions` method. The `versions` method allows you to pass in as many float, integer, or string versions as you'd like. Your routes will be drawn explicitly for each of those versions. Regular expressions and conditions are not used.
 
 ```ruby
 # routes.rb
-api(1.0, 2.0) do
-  resources :cities, :only => [:index, :show] do
-    member do
-      post :express_interest
+extend ::Playbook::Router
+
+namespace :api do
+  versions(1.0, 2.0) do
+    
+    resources :cities, :only => [:index, :show] do
+      member do
+        post :express_interest
+      end
     end
+  
   end
 end
 ```
+
+#### Controllers
+
+You are provided with a `Playbook::BaseController` if you'd like to get things done quickly. If you're more interested in what's going on, check out the modules included into the `Playbook::BaseController`, specifically:
+
+  * Playbook::Controller
+  * Playbook::Authorization
+  * Playbook::Authentication
+  * Playbook::ApiStandards
 
 
 ```ruby
@@ -116,3 +136,9 @@ GET /api/v1/cities.json?page=2
   }
 }
 ```
+
+
+
+#### Utilities
+
+  * version stuff
