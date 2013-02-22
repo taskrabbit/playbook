@@ -56,14 +56,16 @@ module Playbook
 
     class ObjectError < Error
       
-      delegate :id, :to => :error_object, :prefix => :error_object
-      
       def initialize(object)
         @object = object
       end
 
       def error_object
         @object
+      end
+
+      def error_object_id
+        @object.respond_to?(:id) ? @object.id : nil
       end
       
       def error_object_type
