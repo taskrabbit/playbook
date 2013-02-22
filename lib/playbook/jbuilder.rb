@@ -108,7 +108,12 @@ module Playbook
       protected
 
       def _set_value(key, value)
-        value = value.to_i if value.is_a?(Date) || value.is_a?(Time)
+        if value.is_a?(Date)
+          value = value.to_time.to_i
+        elsif value.is_a?(Time)
+          value = value.to_i
+        end
+
         super(key, value)
       end
     end

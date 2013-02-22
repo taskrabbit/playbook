@@ -44,8 +44,8 @@ module Playbook
 
 
     class RequiredParameterMissingError < Error
-      def initialize(keys, any_of = false)
-        super("Missing #{any_of ? 'at least one of these params' : 'these required params'}: #{keys.join(', ')}")
+      def initialize(keys)
+        super("Missing these required params: #{keys.join(', ')}")
       end
 
       def status
