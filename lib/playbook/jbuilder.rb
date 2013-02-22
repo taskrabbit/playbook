@@ -59,6 +59,7 @@ module Playbook
 
       included do
         alias_method_chain :extract!, :api_type
+        alias_method_chain :_set_value, :time_formatting
       end
 
 
@@ -107,14 +108,14 @@ module Playbook
 
       protected
 
-      def _set_value(key, value)
+      def _set_value_with_time_formatting(key, value)
         if value.is_a?(Date)
           value = value.to_time.to_i
         elsif value.is_a?(Time)
           value = value.to_i
         end
 
-        super(key, value)
+        _set_value_without_time_formatting(key, value)
       end
     end
   end
