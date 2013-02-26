@@ -52,33 +52,21 @@ module Playbook
 
         options = keys.extract_options!
 
-        any = options.delete(:any)
         on = [options[:on] || options[:for] || :all].flatten.compact
         
         on.each do |key|
-          required_params[key] ||= {}
-          required_params[key][:need] ||= []
-          required_params[key][:any_of] ||= []
-          if any
-            required_params[key][:any_of] |= keys
-          else
-            required_params[key][:need] |= keys
-          end
+          required_params[key] ||= []
+          required_params[key] |= keys
         end
       end
       alias_method :require_param, :require_params
 
-
-      def require_any_param(*keys)
-        options = keys.extract_options!
-        options[:any] = true
-        keys << options
-        require_params(*keys)
-      end
-      
       def sanitize_params!(instance, method_name)
-        safe_keys = Array(whitelisted_params[method_name.to_sym]) | Array(whitelisted_params[:all])
-        return if safe_keys.empty?
+        safe_keys = Array(whitelisted_params[method_name.to_sym]) 
+        return if safe_keys.include?(:all)
+
+        safe_keys |= Array(whitelisted_params[:all])
+        return if safe_keys.empty? || safe_keys.include?(:all)
 
         instance.params.slice!(*safe_keys)
       end
@@ -86,13 +74,10 @@ module Playbook
       # TODO: refactor. creates a lot of extra arrays and stuff.
       def ensure_required_params_exist!(instance, method_name)
 
-        required_keys   = Array(required_params[method_name.to_sym].try(:[], :need))
-        required_keys  |= Array(required_params[:all].try(:[], :need))
+        required_keys   = Array(required_params[method_name.to_sym])
+        required_keys  |= Array(required_params[:all])
 
-        any_of          = Array(required_params[method_name.to_sym].try(:[], :any_of))
-        any_of         |= Array(required_params[:all].try(:[], :any_of))
-
-        return if required_keys.empty? && any_of.empty?
+        return if required_keys.empty?
         
         param_keys = instance.params.keys.map(&:to_sym)
 
@@ -100,11 +85,7 @@ module Playbook
           missing_required = (required_keys - param_keys)
           raise ::Playbook::Errors::RequiredParameterMissingError.new(missing_required) unless missing_required.empty?
         end
-      
-        unless any_of.empty? 
-          has_intersection = !(any_of & param_keys).empty?
-          raise ::Playbook::Errors::RequiredParameterMissingError.new(any_of, true) unless has_intersection
-        end
+    
       end
       
       def whitelisted_params

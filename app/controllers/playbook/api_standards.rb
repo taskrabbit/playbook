@@ -14,6 +14,10 @@ module Playbook::ApiStandards
 
   module ClassMethods
 
+    def playbook_filters
+      @playbook_filters ||= {}
+    end
+
     protected
 
     def forward_to_adapter(*methods)
@@ -63,14 +67,23 @@ module Playbook::ApiStandards
       before_filter_with_or_without_methods :unsupport, methods
     end
 
+    def debug(*methods)
+      before_filter_with_or_without_methods :debug, methods
+    end
+
 
     protected
 
     def before_filter_with_or_without_methods(name, methods, filter_prefix = nil)
       filter = [filter_prefix, :before_filter].compact.join('_')
+      
+      self.playbook_filters[name] ||= []
+
       if methods.empty? || methods.include?(:all)
+        self.playbook_filters[name] |= [:all]
         send(filter, name)
       else
+        self.playbook_filters[name] |= methods
         send(filter, name, :only => methods)
       end
     end
@@ -106,6 +119,11 @@ module Playbook::ApiStandards
     @request_start_time = Time.now.utc.usec / 1000.0
   end
   
+
+  def debug
+    debugger
+    a=1
+  end
 
 
 

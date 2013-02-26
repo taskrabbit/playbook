@@ -44,8 +44,8 @@ module Playbook
 
 
     class RequiredParameterMissingError < Error
-      def initialize(keys, any_of = false)
-        super("Missing #{any_of ? 'at least one of these params' : 'these required params'}: #{keys.join(', ')}")
+      def initialize(keys)
+        super("Missing these required params: #{keys.join(', ')}")
       end
 
       def status
@@ -56,14 +56,16 @@ module Playbook
 
     class ObjectError < Error
       
-      delegate :id, :to => :error_object, :prefix => :error_object
-      
       def initialize(object)
         @object = object
       end
 
       def error_object
         @object
+      end
+
+      def error_object_id
+        @object.respond_to?(:id) ? @object.id : nil
       end
       
       def error_object_type

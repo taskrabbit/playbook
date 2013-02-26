@@ -10,7 +10,8 @@ describe ::Playbook::Adapter do
       whitelist :object, :on => :doit 
       require_params :id, :on => :doit
 
-      require_any_param :id, :email, :on => :doit3
+      whitelist :something, :on => :doit3
+      whitelist :all,       :on => :doit3
 
       def doit
         success({:name => :doit, :params => self.params})
@@ -71,15 +72,15 @@ describe ::Playbook::Adapter do
     }.should raise_error(Playbook::Errors::RequiredParameterMissingError)
   end
 
-  it 'should allow partial param matching' do
+  it 'should allow any paramater through if all is provided in the whitelist' do
     a = adapter('V2', {:email => true})
     a.doit3.should be_success
 
     a = adapter('V2', {:id => true})
     a.doit3.should be_success
 
-    a = adapter('V2', {})
-    lambda{ a.doit3 }.should raise_error(Playbook::Errors::RequiredParameterMissingError)
+    a = adapter('V2', {:jibberish => 'delta'})
+    a.doit3.should be_success
   end
 
   it 'should exit the method execution immediately when success or failure is called' do

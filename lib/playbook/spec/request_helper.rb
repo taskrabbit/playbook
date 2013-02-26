@@ -39,7 +39,6 @@ module Playbook
       
 
       def get_errors
-        json = JSON.parse(response.body) rescue {}
         json['response'].try(:[], 'errors') || []
       end
 
