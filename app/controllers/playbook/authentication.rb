@@ -79,7 +79,7 @@ module Playbook
     end
 
     def oauth2_token_from_header
-      request.headers['Authorization'].to_s =~ /^OAuth (.+)/
+      request.headers['Authorization'].to_s =~ /^Bearer (.+)/
       $1.try(:strip)
     end
 
