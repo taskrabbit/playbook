@@ -8,6 +8,7 @@ module Playbook
     attr_accessor :rescue_errors
     attr_accessor :require_documentation
     attr_accessor :documentation_path
+    attr_accessor :globally_whitelisted_params
 
     def initialize
       @versions = []
@@ -47,6 +48,11 @@ module Playbook
     def has_version?(v)
       v = ::Playbook::Version.for(v)
       @versions.include?(v)
+    end
+
+    def globally_whitelist(*keys)
+      self.globally_whitelisted_params ||= []
+      self.globally_whitelisted_params |= keys
     end
 
     def allow_jsonp!
