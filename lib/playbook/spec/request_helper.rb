@@ -79,8 +79,8 @@ module Playbook
           c.any_instance.send(stub_method, :find_oauth_token_by_key).with(token.token).send(return_method, token)
         end
 
-        headers['Authorization']      = "OAuth #{token.token}"
-        request.env['Authorization']  = "OAuth #{token.token}" if defined?(request)
+        headers['Authorization']      = "Bearer #{token.token}"
+        request.env['Authorization']  = "Bearer #{token.token}" if defined?(request)
       end
 
       def authenticate_via_session!(user, app = interactive_client_app)
