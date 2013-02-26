@@ -42,6 +42,10 @@ module Playbook
       raise ::Playbook::Errors::AuthenticationError.new(request.path) unless current_user
     end
 
+    def require_role(role)
+      raise ::Playbook::Errors::RollError.new(request.path) unless current_user #has_role? role
+    end
+
     def oauth2_token
       return @oauth2_token if defined?(@oauth2_token)
 
