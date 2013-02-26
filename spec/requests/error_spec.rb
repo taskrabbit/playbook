@@ -27,6 +27,7 @@ describe "Playbook Errors" do
   class PlaybookErrorSpecController < Playbook::BaseController
 
     require_auth  :auth_ep
+    require_admin :admin_ep
     internal      :internal_ep
     jsonp_enabled :jsonp_ep
 
@@ -45,6 +46,10 @@ describe "Playbook Errors" do
     end
 
     def auth_ep
+      head :ok
+    end
+
+    def admin_ep
       head :ok
     end
 
