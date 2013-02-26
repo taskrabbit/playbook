@@ -42,8 +42,21 @@ module Playbook
       raise ::Playbook::Errors::AuthenticationError.new(request.path) unless current_user
     end
 
-    def require_role(role)
-      raise ::Playbook::Errors::RollError.new(request.path) unless current_user #has_role? role
+    def require_admin
+      raise ::Playbook::Errors::AdminError.new(request.path) unless current_user_admin?
+    end
+
+    def current_user_admin?
+      return super if defined?(super)
+      return false unless current_user
+
+      return true if current_user.respond_to?(:admin) && current_user.admin
+      return true if current_user.respond_to?(:admin?) && current_user.admin?
+      return true if current_user.respond_to?(:admin_roles) && current_user.admin_roles
+      return true if current_user.respond_to?(:admin_roles?) && current_user.admin_roles?
+      return true if current_user.respond_to?(:role_symbols) && current_user.role_symbols.include?(:admin)
+
+      false
     end
 
     def oauth2_token

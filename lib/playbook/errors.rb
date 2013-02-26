@@ -20,9 +20,9 @@ module Playbook
       end
     end
 
-    class RoleError < Error
+    class AdminError < Error
       def initialize(path)
-        super("#{path} requires additional roles")
+        super("Only admins can access #{path}")
       end
 
       def status
