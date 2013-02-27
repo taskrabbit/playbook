@@ -27,6 +27,7 @@ describe "Playbook Errors" do
   class PlaybookErrorSpecController < Playbook::BaseController
 
     require_auth  :auth_ep
+    require_admin :admin_ep
     internal      :internal_ep
     jsonp_enabled :jsonp_ep
 
@@ -45,6 +46,10 @@ describe "Playbook Errors" do
     end
 
     def auth_ep
+      head :ok
+    end
+
+    def admin_ep
       head :ok
     end
 
@@ -109,13 +114,45 @@ describe "Playbook Errors" do
         get('/api/v2/test/playbook_error_spec/auth_ep.json', {}, headers)
         error = get_error
         error['key'].should eql('request')
-        error['message']
+        error['message'].should match(/requires authentication/)
       end
 
       it 'should succeed with an authenticated user' do
         authenticate!(Playbook::User.find(1))
         get '/api/v2/test/playbook_error_spec/auth_ep.json', {}, headers
       end
+    end
+
+    context 'administration' do
+
+      it 'should require an authenticated user' do
+        get '/api/v2/test/playbook_error_spec/admin_ep.json', {}, headers
+        response.status.should eql(401)
+
+        error = get_error
+        error['key'].should eql('request')
+        error['message'].should match(/Only admins can access/)
+      end
+
+      it 'should require an admin' do
+        authenticate!(Playbook::User.find(1))
+        Playbook::User.any_instance.stub(:admin).and_return(false)
+
+        get '/api/v2/test/playbook_error_spec/admin_ep.json', {}, headers
+        response.status.should eql(401)
+
+        error = get_error
+        error['key'].should eql('request')
+        error['message'].should match(/Only admins can access/)
+      end
+
+      it 'should allow access to someone with an admin role' do
+        authenticate!(Playbook::User.find(1))
+        Playbook::User.any_instance.stub(:admin).and_return(true)
+        get '/api/v2/test/playbook_error_spec/admin_ep.json', {}, headers
+        response.status.should eql(200)
+      end
+
     end
 
     context 'authorization' do
