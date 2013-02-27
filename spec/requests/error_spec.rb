@@ -125,7 +125,19 @@ describe "Playbook Errors" do
 
     context 'administration' do
 
+      it 'should require an authenticated user' do
+        get '/api/v2/test/playbook_error_spec/admin_ep.json', {}, headers
+        response.status.should eql(401)
+
+        error = get_error
+        error['key'].should eql('request')
+        error['message'].should match(/Only admins can access/)
+      end
+
       it 'should require an admin' do
+        authenticate!(Playbook::User.find(1))
+        Playbook::User.any_instance.stub(:admin).and_return(false)
+
         get '/api/v2/test/playbook_error_spec/admin_ep.json', {}, headers
         response.status.should eql(401)
 
