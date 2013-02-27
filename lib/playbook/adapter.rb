@@ -68,6 +68,8 @@ module Playbook
         safe_keys |= Array(whitelisted_params[:all])
         return if safe_keys.empty? || safe_keys.include?(:all)
 
+        safe_keys |= (::Playbook.config.globally_whitelisted_params || [])
+
         instance.params.slice!(*safe_keys)
       end
 
