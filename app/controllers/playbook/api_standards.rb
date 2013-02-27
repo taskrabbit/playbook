@@ -48,6 +48,7 @@ module Playbook::ApiStandards
     end
 
     def require_admin(*methods)
+      require_auth(*methods)
       before_filter_with_or_without_methods :require_admin, methods
     end
 
