@@ -20,6 +20,16 @@ module Playbook
       end
     end
 
+    class AdminError < Error
+      def initialize(path)
+        super("Only admins can access #{path}")
+      end
+
+      def status
+        401
+      end
+    end
+
     class ResponseNotProvidedError < Error
       def initialize(adapter, method_name)
         super("No response was provided by #{adapter}##{method_name}")
