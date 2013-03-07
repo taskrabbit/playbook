@@ -79,8 +79,8 @@ module Playbook
     end
 
     def oauth2_token_from_header
-      request.headers['Authorization'].to_s =~ /^Bearer (.+)/
-      $1.try(:strip)
+      request.headers['Authorization'].to_s =~ /^(OAuth|Bearer) (.+)/
+      $2.try(:strip)
     end
 
     unless Rails.env.production?
