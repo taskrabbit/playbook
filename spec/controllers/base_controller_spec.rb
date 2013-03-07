@@ -35,6 +35,12 @@ describe ::Playbook::BaseController do
     controller.should respond_to(:my_test_case_adapter_function)
   end
 
+  it 'should accept both Bearer and OAuth headers' do
+    request = stub(:headers => {'Authorization' => 'Bearer 6b08ed8569af5466307897ca9386f9706c830a52'})
+    controller.stub(:request).and_return(request)
+    controller.send(:oauth2_token_from_header).should eql('6b08ed8569af5466307897ca9386f9706c830a52')
+  end
+
   context 'jsonp' do
 
     it 'should raise an error when jsonp is attempted on an endpoint that doens\'t allow it' do
@@ -66,7 +72,6 @@ describe ::Playbook::BaseController do
         controller.send(:verify_jsonp_validity)
       }.should_not raise_error
     end
-
   end
 
 

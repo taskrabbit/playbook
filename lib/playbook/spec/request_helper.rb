@@ -64,6 +64,10 @@ module Playbook
       end
 
       def authenticate!(user, client_app = nil)
+        authenticate_with_header!(user, 'Bearer', client_app)
+      end
+
+      def authenticate_with_header!(user, authz_header_type, client_app = nil)
         token = stub_object('Token',
           :user => user,
           :user_id => user.try(:id),
@@ -78,8 +82,8 @@ module Playbook
           c.any_instance.send(stub_method, :find_oauth_token_by_key).with(token.token).send(return_method, token)
         end
 
-        headers['Authorization']      = "Bearer #{token.token}"
-        request.env['Authorization']  = "Bearer #{token.token}" if defined?(request)
+        headers['Authorization']      = authz_header_type + " #{token.token}"
+        request.env['Authorization']  = authz_header_type + " #{token.token}" if defined?(request)
       end
 
       def authenticate_via_session!(user, app = interactive_client_app)
