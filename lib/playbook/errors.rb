@@ -89,7 +89,7 @@ module Playbook
           name = @object.class.human_attribute_name(key.to_s.gsub(/^.*\./,''))
           {
             :key      => key,
-            :message  => "#{key == 'base' ? '' : "#{name} "}#{msgs.join(' & ')}",
+            :message  => "#{key.to_s == 'base' ? '' : "#{name} "}#{msgs.join(' & ')}",
             :raw      => msgs
           }
         end
