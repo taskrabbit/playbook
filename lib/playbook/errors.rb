@@ -20,6 +20,16 @@ module Playbook
       end
     end
 
+    class AdminError < Error
+      def initialize(path)
+        super("Only admins can access #{path}")
+      end
+
+      def status
+        401
+      end
+    end
+
     class ResponseNotProvidedError < Error
       def initialize(adapter, method_name)
         super("No response was provided by #{adapter}##{method_name}")
@@ -79,7 +89,7 @@ module Playbook
           name = @object.class.human_attribute_name(key.to_s.gsub(/^.*\./,''))
           {
             :key      => key,
-            :message  => "#{key == 'base' ? '' : "#{name} "}#{msgs.join(' & ')}",
+            :message  => "#{key.to_s == 'base' ? '' : "#{name} "}#{msgs.join(' & ')}",
             :raw      => msgs
           }
         end

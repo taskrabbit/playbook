@@ -42,6 +42,23 @@ module Playbook
       raise ::Playbook::Errors::AuthenticationError.new(request.path) unless current_user
     end
 
+    def require_admin
+      raise ::Playbook::Errors::AdminError.new(request.path) unless current_user_admin?
+    end
+
+    def current_user_admin?
+      return super if defined?(super)
+      return false unless current_user
+
+      return true if current_user.respond_to?(:admin) && current_user.admin
+      return true if current_user.respond_to?(:admin?) && current_user.admin?
+      return true if current_user.respond_to?(:admin_roles) && current_user.admin_roles
+      return true if current_user.respond_to?(:admin_roles?) && current_user.admin_roles?
+      return true if current_user.respond_to?(:role_symbols) && current_user.role_symbols.include?(:admin)
+
+      false
+    end
+
     def oauth2_token
       return @oauth2_token if defined?(@oauth2_token)
 
@@ -62,8 +79,8 @@ module Playbook
     end
 
     def oauth2_token_from_header
-      request.headers['Authorization'].to_s =~ /^Bearer (.+)/
-      $1.try(:strip)
+      request.headers['Authorization'].to_s =~ /^(OAuth|Bearer) (.+)/
+      $2.try(:strip)
     end
 
     unless Rails.env.production?

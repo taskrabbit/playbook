@@ -47,6 +47,10 @@ module Playbook::ApiStandards
       before_filter_with_or_without_methods :require_auth, methods
     end
 
+    def require_admin(*methods)
+      before_filter_with_or_without_methods :require_admin, methods
+    end
+
     def internal(*methods)
       before_filter_with_or_without_methods :validate_internal_client_application, methods
     end
