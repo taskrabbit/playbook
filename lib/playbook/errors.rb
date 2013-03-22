@@ -62,6 +62,26 @@ module Playbook
         412
       end
     end
+    
+    class NotFoundError < Error
+      def initialize(message = nil)
+        super(message || "Not Found")
+      end
+
+      def status
+        404
+      end
+    end
+
+    class AuthorizationError < Error
+      def initialize(message=nil)
+        super(message || "Forbidden")
+      end
+
+      def status
+        403
+      end
+    end
 
 
     class ObjectError < Error
