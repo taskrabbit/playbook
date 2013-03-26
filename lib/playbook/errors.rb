@@ -106,11 +106,13 @@ module Playbook
         by_name = {}
         @object.errors.each{|name, msg| (by_name[name] ||= []) << msg }
         by_name.map do |key, msgs|
+          msgs = msgs.flatten
           name = @object.class.human_attribute_name(key.to_s.gsub(/^.*\./,''))
           {
             :key      => key,
             :message  => "#{key.to_s == 'base' ? '' : "#{name} "}#{msgs.join(' & ')}",
-            :raw      => msgs
+            :raw      => msgs,
+            :codes    => msgs.map{|msg| [msg.api_id, msg] }
           }
         end
       end

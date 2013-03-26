@@ -7,6 +7,7 @@ module Playbook
   autoload :Configuration,              'playbook/configuration'
   autoload :Controller,                 'playbook/controller'
   autoload :Engine,                     'playbook/engine'
+  autoload :ErrorMessageIds,            'playbook/error_message_ids'
   autoload :Errors,                     'playbook/errors'
   autoload :Jbuilder,                   'playbook/jbuilder'
   autoload :JsonResult,                 'playbook/json_result'

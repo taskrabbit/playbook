@@ -4,9 +4,11 @@ describe "Playbook Errors" do
   include Playbook::Spec::RequestHelper
 
   class ErrorObject
-    def add(name, msg)
+
+    def add(name, msg, options = {})
       @errors ||= {}
       @errors[name] ||= []
+      msg.extend Playbook::ErrorMessageIds::ErrorExtender
       @errors[name] << msg
       @errors
     end
