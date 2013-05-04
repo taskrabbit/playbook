@@ -63,6 +63,7 @@ module Playbook
     def extend_jbuilder!
       ::Jbuilder.send(:include, ::Playbook::Jbuilder::Extensions)
       ::JbuilderTemplate.send(:include, ::Playbook::Jbuilder::TemplateExtensions)
+      ::String.send(:include, ::Playbook::EpochDuckTyping)
     end
   
   end
