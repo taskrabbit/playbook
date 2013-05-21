@@ -58,6 +58,8 @@ module Playbook
       def most_relevant_constant(context, name, previous_only = false)
 
         this_version = ::Playbook::Version.for(context)
+        return nil unless this_version
+
         prefix = context.name.split(this_version.to_namespace).first
 
         relevant_versions = ::Playbook.config.descending_versions(this_version, !this_version.beta?)

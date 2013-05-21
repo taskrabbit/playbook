@@ -1,15 +1,15 @@
 module Playbook
   module Controller
     def playbook_adapter_class
-      controller_scope = self.class.name.split(self.api_version.to_namespace).last
+      controller_scope = resolver_class.name.split(self.api_version.to_namespace).last
       controller_scope =~ /::(.+)Controller$/
       return nil unless $1
       wanted_adapter_name = "#{$1.singularize}Adapter"
-      ::Playbook::Matcher.most_relevant_class(self.class, wanted_adapter_name)
+      ::Playbook::Matcher.most_relevant_class(resolver_class, wanted_adapter_name)
     end
 
     def playbook_request_class
-      ::Playbook::Matcher.most_relevant_class(self.class, 'ControllerRequest') || ::Playbook::Request::ControllerRequest
+      ::Playbook::Matcher.most_relevant_class(resolver_class, 'ControllerRequest') || ::Playbook::Request::ControllerRequest
     end
 
     def adapter(force_reload = false)
@@ -20,7 +20,11 @@ module Playbook
     end
     
     def api_version
-      @api_version ||= ::Playbook::Matcher.version_from_namespace(self.class)
+      @api_version ||= ::Playbook::Matcher.version_from_namespace(resolver_class)
+    end
+    
+    def resolver_class
+      self.class
     end
   end
 end
