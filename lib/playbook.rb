@@ -18,6 +18,11 @@ module Playbook
   autoload :Version,                    'playbook/version'
   autoload :VersionInstantiator,        'playbook/version_instantiator'
 
+  module Middleware
+    autoload :Batch,                    'playbook/middleware/batch'
+  end
+
+
   module Request
     autoload :BaseRequest,              'playbook/request/base_request'
     autoload :ControllerRequest,        'playbook/request/controller_request'

@@ -1,81 +1,93 @@
 module Playbook
   module Middleware
-    module Batch
+    class Batch
+
+      class UnacceptableRequestError < StandardError
+      end
 
       def initialize(app)
         @app = app
       end
 
       def call(env)
-        base_request = Rack::Request.new(env)
 
-        if batch_request?(base_request)
-          responses = requests(base_request).map do |sub_env|
-            @app.call(sub_env)
-          end
+        return @app.call(env) unless batch_request?(env)
 
-          finalize(responses)
-        else
-          @app.call(env)
+        responses = request_hashes(env).map do |request|
+          handle_request(request)
         end
+
+        finalize(responses)
+
+      rescue UnacceptableRequestError
+        @app.call(env)
       end
 
       protected
 
-      def batch_request?(base_request)
+      def batch_request?(env)
         return false unless Playbook.config.batch_path
-        return false unless base_request.post?
+        return false unless env['REQUEST_METHOD'] == 'POST'
         return false unless env['PATH_INFO'] == Playbook.config.batch_path
 
         true
       end
 
-      def requests(base_request)
-        json = decode_json(base_request.body)
-        json['requests'].each do |request|
-          sub_env = base_request.env.dup
+      def request_hashes(env)
+        # if they send a bogus (or empty) body we just let the 
+        # request through to 404 or whatever the app wants to do
+        json = begin
+          decode_json(env['rack.input'])
+        rescue 
+          raise UnacceptableRequestError
+        end
 
-          sub_env.delete_if do |k,v|
-            k.to_s =~ /rack\./ && 
-            !self.whitelisted_rack_variables.include?(k.to_s)
-          end
+        requests  = json.is_a?(Array) ? json : json['requests']
 
-          q = (request['params'] || {}).to_query
+        requests.map do |request|
+          sub_env = env.deep_dup
 
-          sub_env.merge!({
-            'QUERY_STRING'    => q,
-            'PATH_INFO'       => request['path'],
-            'REQUEST_METHOD'  => (request['method'] || 'GET').upcase,
-            'CONTENT_LENGTH'  => q.length.to_s
-          })
+          path    = request['path']
+          method  = (request['method'] || 'GET').upcase
+          query   = (request['params'] || {}).to_query
+          body    = request['body'].to_s
+
+          sub_env['PATH_INFO']      = path
+          sub_env['REQUEST_METHOD'] = method
+          sub_env['QUERY_STRING']   = query
+          sub_env['rack.input']     = StringIO.new(body)
+
+          sub_env
         end
       end
 
+      def handle_request(request)
+        status, headers, body = @app.call(request)
+        body.close if body.respond_to?(:close)
+        
+        # rack responses only need to define #each. Some define #join but we can't guarantee it
+        # for this reason we implement a join like iterator.
+        response_body = ''
+        body.each{|bod| response_body << bod }
+        response_body
+      end
+
+      # decode all the responses then encode as a single response.
       def finalize(responses)
-        full_headers = nil
-        full_body = []
-        responses.each do |status, header, body|
-          full_headers ||= header
-          full_body << decode_json(body)
-        end
 
-        full_body = encode_json(full_body)
+        response = 200
+        body     = responses.map{|response| decode_json(response) }.to_json
+        headers  = {'Content-Type' => 'application/json'}
 
-        full_headers['Content-Length'] = full_body.length.to_s
-
-        [200, full_headers, full_body]
-      end
-
-      def whitelisted_rack_variables
-        %w(rack.session rack.session.options rack.logger)
+        [response, headers, [body]]
       end
 
       def decode_json(text)
-        ActiveSupport::decode(text)
+        ActiveSupport::JSON::decode(text)
       end
 
       def encode_json(json_blob)
-        ActiveSupport::encode(json_blob)
+        ActiveSupport::JSON::encode(json_blob)
       end
 
     end
