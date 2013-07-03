@@ -69,21 +69,22 @@ module Playbook
         # for this reason we implement a join like iterator.
         response_body = ''
         body.each{|bod| response_body << bod }
-        response_body
+
+        {:status => status, :headers => headers, :body => decode_json(response_body)}
       end
 
       # decode all the responses then encode as a single response.
       def finalize(responses)
 
         response = 200
-        body     = responses.map{|response| decode_json(response) }.to_json
+        body     = responses.to_json
         headers  = {'Content-Type' => 'application/json'}
 
         [response, headers, [body]]
       end
 
       def decode_json(text)
-        ActiveSupport::JSON::decode(text)
+        text.blank? ? text : ActiveSupport::JSON::decode(text)
       end
 
       def encode_json(json_blob)
