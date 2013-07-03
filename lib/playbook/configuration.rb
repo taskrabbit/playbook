@@ -9,6 +9,7 @@ module Playbook
     attr_accessor :require_documentation
     attr_accessor :documentation_path
     attr_accessor :globally_whitelisted_params
+    attr_accessor :batch_path
 
     def initialize
       @versions = []
