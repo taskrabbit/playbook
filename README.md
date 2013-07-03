@@ -139,6 +139,44 @@ GET /api/v1/cities.json?page=2
 
 
 
-#### Utilities
+#### Batching
 
-  * version stuff
+You can configure your api to receive batch requests by setting the `batch_path` config option and adding the batch middleware:
+
+```ruby
+# config/initializers/playbook.rb
+Playbook.configure do |c|
+  c.batch_path = '/api/batch.json'
+end
+
+# application.rb
+config.middleware.insert_before 0, 'Playbook::Middleware::Batch'
+```
+
+To invoke a batch operation, you must conduct a POST request against your configured batch path with a request body like the following:
+
+```json
+[
+  {
+    "path" : "/api/v1/states.json",
+    "params" : {
+      "page" : 2
+    },
+    "method" : "get"
+  },
+  {
+    "path" : "/api/v1/signup.json",
+    "method" : "post",
+    "body" : "name=john&email=example@test.com"
+  },
+  {
+    "path" : "/api/v1/sync.json",
+    "params" : {
+      "date" : "2013-07-02"
+    },
+    "method" : "post"
+  }
+]
+```
+
+This will end up conducting 3 requests with a single http call.
