@@ -11,7 +11,7 @@ ENV['RAILS_ENV'] = 'test'
 require File.join(File.dirname(__FILE__), 'internal', 'config', 'environment.rb')
 
 require 'jbuilder'
-require 'jbuilder_template'
+require 'jbuilder/jbuilder_template'
 
 require 'rspec/rails'
 

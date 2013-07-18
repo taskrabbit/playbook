@@ -125,7 +125,7 @@ module Playbook::ApiStandards
   
 
   def debug
-    debugger
+    byebug
     a=1
   end
 

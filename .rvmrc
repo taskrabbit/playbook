@@ -1,2 +1,0 @@
-#rvm use 1.9.3-p194@playbook --create
-rvm use ree@playbook --create
