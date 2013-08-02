@@ -100,8 +100,7 @@ describe "Playbook Errors" do
     it 'should render object errors for AR\'s' do
       get('/api/v2/test/playbook_error_spec/object_error.json', {}, headers)
       error = get_error
-      puts error.to_yaml
-
+      
       error['key'].should eql('name')
       error['message'].should eql('Name cant be blank')
     end

@@ -159,7 +159,7 @@ module Playbook::ApiStandards
 
   def render_object_error(error)
     @error_object = error
-    render '/playbook/layouts/active_record_error', :status => error.respond_to?(:status) ? error.status : 422
+    render '/playbook/layouts/object_error', :status => error.respond_to?(:status) ? error.status : 422
   end
 
   def render_standard_error(error)

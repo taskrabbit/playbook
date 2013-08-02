@@ -4,7 +4,16 @@ module Playbook
   module Errors
     
     # base class. catch this in your execution blocks
-    class Error < ::StandardError; end
+    class Error < ::StandardError
+
+      attr_reader :status
+
+      def initialize(error, status = nil)
+        super(error)
+        @status = status || 500
+      end
+
+    end
 
     class OverRateLimitError < Error; end
     class ControllerNotInitializedError < Error; end
@@ -12,21 +21,13 @@ module Playbook
 
     class AuthenticationError < Error
       def initialize(path)
-        super("#{path} requires authentication")
-      end
-
-      def status
-        401
+        super("#{path} requires authentication", 401)
       end
     end
 
     class AdminError < Error
       def initialize(path)
-        super("Only admins can access #{path}")
-      end
-
-      def status
-        401
+        super("Only admins can access #{path}", 401)
       end
     end
 
@@ -55,38 +56,27 @@ module Playbook
 
     class RequiredParameterMissingError < Error
       def initialize(keys)
-        super("Missing these required params: #{keys.join(', ')}")
-      end
-
-      def status
-        412
+        super("Missing these required params: #{keys.join(', ')}", 412)
       end
     end
     
     class NotFoundError < Error
       def initialize(message = nil)
-        super(message || "Not Found")
-      end
-
-      def status
-        404
+        super(message || "Not Found", 404)
       end
     end
 
     class AuthorizationError < Error
       def initialize(message=nil)
-        super(message || "Forbidden")
-      end
-
-      def status
-        403
+        super(message || "Forbidden", 403)
       end
     end
 
 
     class ObjectError < Error
-      
-      def initialize(object)
+
+      def initialize(object, status = nil)
+        super(object.try(:errors).inspect, status || 422)
         @object = object
       end
 
