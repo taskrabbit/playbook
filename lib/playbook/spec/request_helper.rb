@@ -106,7 +106,7 @@ module Playbook
       end
 
       def all_controllers
-        [Playbook::BaseController, Playbook::BaseController.descendants].flatten
+        ActionController::Base.descendants.select{|d| d.include?(Playbook::Controller) }
       end
 
       def stub_object(name, atts = {})

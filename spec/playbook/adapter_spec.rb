@@ -107,15 +107,4 @@ describe ::Playbook::Adapter do
     }.should_not raise_error
   end
 
-  it 'should allow through globally whitelisted params' do
-    Playbook.configure do |c|
-      c.globally_whitelist :page, :per_page
-    end
-
-    params = {:id => 'test', :page => 2, :per_page => 30, :bad => true}
-
-    a = adapter('V2', params)
-    response = a.doit
-    response.params.should eql(params.except(:bad))
-  end
 end

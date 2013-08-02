@@ -3,7 +3,8 @@ require 'spec_helper'
 describe 'Playbook Authorization' do
   include Playbook::Spec::RequestHelper
 
-  class PlaybookAuthorizationSpecController < Playbook::BaseController
+  class PlaybookAuthorizationSpecController < ActionController::Base
+    include Playbook::Controller
 
     internal :internal_ep, :combined_ep
     interactive :interactive_ep, :combined_ep
@@ -73,13 +74,6 @@ describe 'Playbook Authorization' do
     error['message'].should eql('NOT FOUND at /api/v2/test/playbook_authorization_spec/combined_ep.json')
     response.status.should eql(404)
   end
-
-  it 'should enable jsonp for all endpoints when an interactive app is present' do
-    authorize!(interactive_client_app)
-    get '/api/v2/test/playbook_authorization_spec/interactive_ep.jsonp', {'callback' => 'myfunc'}, headers
-    response.status.should eql(200)
-  end
-
 
 
 end

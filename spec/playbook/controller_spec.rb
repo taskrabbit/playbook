@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe ::Playbook::Controller do
+describe ::Playbook::Integration do
 
   module Reptile
     extend ::Playbook::VersionInstantiator
 
     class V2::SnakeAdapter < ::Playbook::Adapter; end
     class V2::SnakesController < Struct.new(:params)
-      include Playbook::Controller
+      include Playbook::Integration
     end
 
     class V2v1::ControllerRequest < ::Playbook::Request::ControllerRequest; end

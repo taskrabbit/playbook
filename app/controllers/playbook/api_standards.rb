@@ -4,9 +4,8 @@ module Playbook::ApiStandards
   included do
     layout '/playbook/layouts/application.json'
 
-    helper_method :api_version, :jsonp?, :jsonp_enabled?, :top_level_content, :api_request_params
+    helper_method :api_version, :top_level_content, :api_request_params
 
-    before_filter :verify_jsonp_validity
     before_filter :determine_requested_response_format
 
     prepend_before_filter :set_request_start
@@ -57,10 +56,6 @@ module Playbook::ApiStandards
 
     def interactive(*methods)
       before_filter_with_or_without_methods :validate_interactive_client_application, methods
-    end
-
-    def jsonp_enabled(*methods)
-      before_filter_with_or_without_methods :enable_jsonp, methods, :prepend
     end
 
     def deprecate(*methods)
@@ -139,36 +134,6 @@ module Playbook::ApiStandards
 
   def unsupport
     raise ::Playbook::Errors::EndpointNotSupportedError.new(request.path, api_version, "Use the previous api version to access this endpoint.")
-  end
-
-
-  #### jsonp support ###
-
-  def enable_jsonp
-    @jsonp_enabled = true
-  end
-
-  def valid_jsonp?
-    jsonp_attempt? && params[:callback].present?
-  end
-  alias_method :jsonp?, :valid_jsonp?
-
-  def jsonp_enabled?
-    @jsonp_enabled || current_client_application.try(:interactive)
-  end
-
-  def jsonp_attempt?
-    params[:format] == 'jsonp'
-  end
-
-  def verify_jsonp_validity
-    if jsonp_attempt?
-      if !jsonp_enabled?
-        raise ::Playbook::Errors::EndpointNotSupportedError.new(request.path, api_version, "Jsonp is not enabled for this endpoint.", 405)
-      elsif !valid_jsonp?
-        raise ::Playbook::Errors::EndpointNotSupportedError.new(request.path, api_version, "Invalid jsonp request. Provide a callback parameter.", 400)
-      end
-    end
   end
 
 

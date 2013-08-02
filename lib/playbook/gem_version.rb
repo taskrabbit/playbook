@@ -1,3 +1,3 @@
 module Playbook
-  VERSION = '3.0.0'
+  VERSION = '3.0.0.beta'
 end

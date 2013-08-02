@@ -4,7 +4,8 @@ describe 'Playbook Authentication Spec' do
   include Playbook::Spec::RequestHelper
 
 
-  class AuthTestController < Playbook::BaseController
+  class AuthTestController < ActionController::Base
+    include Playbook::Controller
 
     require_auth :auth_required_ep
 

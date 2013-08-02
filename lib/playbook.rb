@@ -5,11 +5,9 @@ module Playbook
 
   autoload :Adapter,                    'playbook/adapter'
   autoload :Configuration,              'playbook/configuration'
-  autoload :Controller,                 'playbook/controller'
   autoload :Engine,                     'playbook/engine'
-  autoload :EpochDuckTyping,            'playbook/epoch_duck_typing'
-  autoload :ErrorMessageIds,            'playbook/error_message_ids'
   autoload :Errors,                     'playbook/errors'
+  autoload :Integration,                'playbook/integration'
   autoload :Jbuilder,                   'playbook/jbuilder'
   autoload :JsonResult,                 'playbook/json_result'
   autoload :Matcher,                    'playbook/matcher'

@@ -26,9 +26,8 @@ end
 
 #### Controllers
 
-You are provided with a `Playbook::BaseController` if you'd like to get things done quickly. If you're more interested in what's going on, check out the modules included into the `Playbook::BaseController`, specifically:
+You are provided with a `Playbook::Controller` if you'd like to get things done quickly. If you're more interested in what's going on, check out the modules included into the `Playbook::Controller`, specifically:
 
-  * Playbook::Controller
   * Playbook::Authorization
   * Playbook::Authentication
   * Playbook::ApiStandards
@@ -36,7 +35,7 @@ You are provided with a `Playbook::BaseController` if you'd like to get things d
 
 ```ruby
 # app/api/controllers/api/v1/cities_controller.rb
-class Api::V1::CitiesController < ::Playbook::BaseController
+class Api::V1::CitiesController < ::Playbook::Controller
   
   forward_to_adapter :express_interest, :render => '/api/v1/cities/show', :status => 201
   forward_to_adapter :show,             :render => '/api/v1/cities/show'

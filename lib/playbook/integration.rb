@@ -1,5 +1,6 @@
 module Playbook
-  module Controller
+  module Integration
+
     def playbook_adapter_class
       controller_scope = resolver_class.name.split(self.api_version.to_namespace).last
       controller_scope =~ /::(.+)Controller$/
@@ -26,5 +27,6 @@ module Playbook
     def resolver_class
       self.class
     end
+    
   end
 end

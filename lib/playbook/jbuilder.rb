@@ -3,29 +3,6 @@ require 'jbuilder'
 module Playbook
   module Jbuilder
 
-    module Jsonp
-      extend ActiveSupport::Concern
-
-      included do
-        alias_method_chain :target!, :jsonp
-      end
-
-
-      def jsonp!(callback_name)
-        @jsonp_callback = callback_name
-      end
-
-      def target_with_jsonp!
-        json = target_without_jsonp!
-        if @jsonp_callback
-          "#{@jsonp_callback}(#{json})"
-        else
-          json
-        end
-      end
-
-    end
-
     module TemplateExtensions
       
       def collection!(col, options = {})

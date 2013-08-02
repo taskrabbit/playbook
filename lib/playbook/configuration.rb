@@ -6,9 +6,6 @@ module Playbook
 
     attr_reader :versions
     attr_accessor :rescue_errors
-    attr_accessor :require_documentation
-    attr_accessor :documentation_path
-    attr_accessor :globally_whitelisted_params
 
     def initialize
       @versions = []
@@ -50,20 +47,9 @@ module Playbook
       @versions.include?(v)
     end
 
-    def globally_whitelist(*keys)
-      self.globally_whitelisted_params ||= []
-      self.globally_whitelisted_params |= keys
-    end
-
-    def allow_jsonp!
-      Mime::EXTENSION_LOOKUP['jsonp'] = Mime::Type.lookup_by_extension('json')
-      ::Jbuilder.send(:include, ::Playbook::Jbuilder::Jsonp)
-    end
-
     def extend_jbuilder!
       ::Jbuilder.send(:include, ::Playbook::Jbuilder::Extensions)
       ::JbuilderTemplate.send(:include, ::Playbook::Jbuilder::TemplateExtensions)
-      ::String.send(:include, ::Playbook::EpochDuckTyping)
     end
   
   end

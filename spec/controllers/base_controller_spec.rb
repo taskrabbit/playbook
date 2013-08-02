@@ -1,8 +1,12 @@
 require 'spec_helper'
 
-describe ::Playbook::BaseController do
+class BaseController < ActionController::Base
+  include Playbook::Controller
+end
+
+describe BaseController do
   include Playbook::Spec::RequestHelper
-  
+
   let(:user){ Playbook::User.find(1) }
 
   it 'should not use the current user from the session if no oauth user can be inferred and the current client app does not allow it' do    
@@ -46,40 +50,6 @@ describe ::Playbook::BaseController do
     controller.stub(:request).and_return(request)
     controller.send(:oauth2_token_from_header).should eql('6b08ed8569af5466307897ca9386f9706c830a52')
   end
-
-  context 'jsonp' do
-
-    it 'should raise an error when jsonp is attempted on an endpoint that doens\'t allow it' do
-      controller.stub(:params).and_return({:format => 'jsonp'})
-      controller.stub(:jsonp_enabled?).and_return(false)
-      controller.should be_jsonp_attempt
-      controller.should_not be_valid_jsonp
-      lambda{
-        controller.send(:verify_jsonp_validity)
-      }.should raise_error('Jsonp is not enabled for this endpoint.')
-    end
-
-    it 'should raise an error with feedback about the missing callback' do
-      controller.stub(:params).and_return({:format => 'jsonp'})
-      controller.stub(:jsonp_enabled?).and_return(true)
-      controller.should be_jsonp_attempt
-      controller.should_not be_valid_jsonp
-      lambda{
-        controller.send(:verify_jsonp_validity)
-      }.should raise_error('Invalid jsonp request. Provide a callback parameter.')
-    end
-
-    it 'should not raise an error when everything is wonderful' do
-      controller.stub(:params).and_return({:format => 'jsonp', :callback => 'mytestfunction'})
-      controller.stub(:jsonp_enabled?).and_return(true)
-      controller.should be_jsonp_attempt
-      controller.should be_valid_jsonp
-      lambda{
-        controller.send(:verify_jsonp_validity)
-      }.should_not raise_error
-    end
-  end
-
 
   protected
 

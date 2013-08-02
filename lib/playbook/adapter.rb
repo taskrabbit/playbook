@@ -9,7 +9,6 @@ module Playbook
     class FinishedNotifier < StandardError; end
 
     delegate :params, :current_user, :current_client_application, :to => :@request
-    class_attribute :documentation
 
     def initialize(request)
       @response = nil
@@ -68,8 +67,6 @@ module Playbook
         safe_keys |= Array(whitelisted_params[:all])
         return if safe_keys.empty? || safe_keys.include?(:all)
 
-        safe_keys |= (::Playbook.config.globally_whitelisted_params || [])
-
         instance.params.slice!(*safe_keys)
       end
 
@@ -106,16 +103,6 @@ module Playbook
         @required_params = params
       end
 
-      def desc(content = nil)
-        content ||= yield if block_given?
-        @current_method_documentation = content
-      end
-      alias_method :doc, :desc
-
-      def nodoc
-        @current_method_documentation = 'nodoc'
-      end
-
       # do this at the end so only methods declared from this point on are observed
       def method_added(method_name)
         return if @skip_method_checking
@@ -127,13 +114,6 @@ module Playbook
       protected
 
       def endpoint(name, options = {}, &block)
-        if @current_method_documentation.nil?
-          raise ::Playbook::Errors::DocumentationNotProvidedError.new(self, name) if ::Playbook.config.require_documentation 
-        else
-          self.documentation ||= {}
-          self.documentation[name] = @current_method_documentation
-        end
-
 
         without_method_checks do
           class_eval <<-SAN, __FILE__, __LINE__ + 1
@@ -153,7 +133,6 @@ module Playbook
           SAN
           alias_method_chain name, :filters
         end
-        @current_method_documentation = nil
       end
 
       # this is needed because confusing things happen and you end up with a stack level too deep.

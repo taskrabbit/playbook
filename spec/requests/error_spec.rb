@@ -8,7 +8,6 @@ describe "Playbook Errors" do
     def add(name, msg, options = {})
       @errors ||= {}
       @errors[name] ||= []
-      msg.extend Playbook::ErrorMessageIds::ErrorExtender
       @errors[name] << msg
       @errors
     end
@@ -26,12 +25,12 @@ describe "Playbook Errors" do
     end
   end
 
-  class PlaybookErrorSpecController < Playbook::BaseController
+  class PlaybookErrorSpecController < ActionController::Base
+    include Playbook::Controller
 
     require_auth  :auth_ep
     require_admin :admin_ep
     internal      :internal_ep
-    jsonp_enabled :jsonp_ep
 
     def general_error
       raise "Anything"
@@ -41,10 +40,6 @@ describe "Playbook Errors" do
       obj = ErrorObject.new
       obj.add(:name, 'cant be blank')
       raise ::Playbook::Errors::ObjectError.new(obj)
-    end
-
-    def jsonp_ep
-      head :ok
     end
 
     def auth_ep
@@ -105,6 +100,7 @@ describe "Playbook Errors" do
     it 'should render object errors for AR\'s' do
       get('/api/v2/test/playbook_error_spec/object_error.json', {}, headers)
       error = get_error
+      puts error.to_yaml
 
       error['key'].should eql('name')
       error['message'].should eql('Name cant be blank')
@@ -172,36 +168,6 @@ describe "Playbook Errors" do
       end
     end
 
-    context 'jsonp' do
-
-      it 'should 404 if the endpoint does not allow jsonp' do
-        get('/api/v2/test/playbook_error_spec/happy.jsonp', {}, headers)
-        error = get_error
-        response.status.should eql(405)
-        error['key'].should eql('request')
-        error['message'].should eql('Jsonp is not enabled for this endpoint.')
-      end
-
-      it 'should require a callback param' do
-        get('/api/v2/test/playbook_error_spec/jsonp_ep.jsonp', {}, headers)
-        error = get_error
-        response.status.should eql(400)
-        error['key'].should eql('request')
-        error['message'].should eql('Invalid jsonp request. Provide a callback parameter.')
-      end
-
-      it 'should work with enabled and the callback provided' do
-        get '/api/v2/test/playbook_error_spec/jsonp_ep.json', {'callback' => 'myfunc'}, headers
-        response.status.should eql(200)
-      end
-
-      it 'should allow jsonp on all endpoints for interactive apps' do
-        authorize!(interactive_client_app)
-        get '/api/v2/test/playbook_error_spec/happy.jsonp', {'callback' => 'myfunc'}, headers
-        response.status.should eql(200)
-      end
-
-    end
   end
 
 end
