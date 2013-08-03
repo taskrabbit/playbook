@@ -9,8 +9,8 @@ module Playbook
 
         if cache_options = options.delete(:cache)
           cache_key = cache_key_for_collection(cache_options.delete(:key), col)
-          self.cache! cache_key, cache_options do |json|
-            json.extract_collection!(col, options)
+          self.cache! cache_key, cache_options do
+            self.extract_collection!(col, options)
           end
         else
           self.extract_collection!(col, options)
@@ -59,10 +59,10 @@ module Playbook
         
         self.item_type    col[0].api_type if col[0].respond_to?(:api_type)
 
-        self.set!(:items) do |j|
-          j.array!(col) do |parent, obj|
+        self.set!(:items) do
+          self.array!(col) do |obj|
             if partial
-              parent.partial! partial, as => obj
+              self.partial! partial, as => obj
             else
               yield parent, obj
             end
