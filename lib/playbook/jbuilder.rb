@@ -55,7 +55,7 @@ module Playbook
           self.api_type     'PaginatedCollection'
         end
 
-        col = col.all if col.respond_to?(:all) && !(col.respond_to?(:loaded?) && col.loaded?)
+        col = col.to_a if col.respond_to?(:to_a) && !(col.respond_to?(:loaded?) && col.loaded?)
         
         self.item_type    col[0].api_type if col[0].respond_to?(:api_type)
 
