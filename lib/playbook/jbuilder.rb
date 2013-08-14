@@ -45,6 +45,7 @@ module Playbook
 
         partial = options[:partial]
         as      = options[:as]
+        locals  = options[:locals] || {}
 
         self.api_type     'Collection'
 
@@ -62,7 +63,7 @@ module Playbook
         self.set!(:items) do
           self.array!(col) do |obj|
             if partial
-              self.partial! partial, as => obj
+              self.partial! partial, { as => obj }.merge(locals)
             else
               yield parent, obj
             end
