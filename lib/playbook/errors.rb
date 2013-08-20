@@ -101,7 +101,8 @@ module Playbook
           {
             :key      => key,
             :message  => "#{key.to_s == 'base' ? '' : "#{name} "}#{msgs.join(' & ')}",
-            :raw      => msgs
+            :raw      => msgs,
+            :codes    => msgs.map{|msg| [msg.api_id, msg] }
           }
         end
       end

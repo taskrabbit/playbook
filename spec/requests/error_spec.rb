@@ -8,6 +8,7 @@ describe "Playbook Errors" do
     def add(name, msg, options = {})
       @errors ||= {}
       @errors[name] ||= []
+      msg.extend ::Playbook::ErrorMessageIds::ErrorExtender
       @errors[name] << msg
       @errors
     end
