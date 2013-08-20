@@ -99,10 +99,9 @@ module Playbook
           msgs = msgs.flatten
           name = @object.class.human_attribute_name(key.to_s.gsub(/^.*\./,''))
           {
-            :key      => key,
-            :message  => "#{key.to_s == 'base' ? '' : "#{name} "}#{msgs.join(' & ')}",
-            :raw      => msgs,
-            :codes    => msgs.map{|msg| [msg.api_id, msg] }
+            :key        => key,
+            :message    => "#{key.to_s == 'base' ? '' : "#{name} "}#{msgs.to_sentence}",
+            :raw        => Hash[msgs.map{|msg| [msg.api_id, msg] }]
           }
         end
       end
