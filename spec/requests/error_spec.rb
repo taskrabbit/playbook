@@ -40,6 +40,7 @@ describe "Playbook Errors" do
     def object_error
       obj = ErrorObject.new
       obj.add(:name, 'cant be blank')
+      obj.add(:name, 'too short')
       raise ::Playbook::Errors::ObjectError.new(obj)
     end
 
@@ -95,15 +96,17 @@ describe "Playbook Errors" do
       get('/api/v2/test/playbook_error_spec/general_error.json', {}, headers)
       error = get_error
       error['key'].should eql('request')
+      error['code'].should eql('request_500')
       error['message'].should eql('Anything')
     end
 
     it 'should render object errors for AR\'s' do
       get('/api/v2/test/playbook_error_spec/object_error.json', {}, headers)
       error = get_error
-      
+
       error['key'].should eql('name')
-      error['message'].should eql('Name cant be blank')
+      error['code'].should eql('name_cant_be_blank_too_short')
+      error['message'].should eql('Name cant be blank and too short')
     end
 
     context 'authentication' do

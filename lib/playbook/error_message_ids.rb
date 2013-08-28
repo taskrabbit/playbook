@@ -4,7 +4,7 @@ module Playbook
 
     module ErrorExtender
       def api_id
-        @api_id || self.parameterize.gsub('-', '.')
+        @api_id || self.parameterize.gsub('-', '_')
       end
 
       def api_id=(val)
