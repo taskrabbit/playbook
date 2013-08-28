@@ -101,7 +101,7 @@ module Playbook
           {
             :key        => key,
             :message    => "#{key.to_s == 'base' ? '' : "#{name} "}#{msgs.to_sentence}",
-            :raw        => Hash[msgs.map{|msg| [msg.api_id, msg] }]
+            :code       => ([key] + msgs.collect { |msg| [msg.api_id] }.sort).join("_")
           }
         end
       end
